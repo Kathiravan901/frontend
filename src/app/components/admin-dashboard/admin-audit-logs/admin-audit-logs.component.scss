@@ -1,0 +1,190 @@
+.audit-logs-container {
+  .page-header {
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+
+    h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    p {
+      font-size: 0.82rem;
+      color: #6c757d;
+      margin-bottom: 0;
+    }
+  }
+
+  /* Filter Section */
+  .filter-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+
+    .form-label {
+      font-size: 0.78rem;
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+
+    .input-group-text {
+      background: white !important;
+      color: #0d6efd;
+      border: 1px solid #dee2e6;
+      border-right: none;
+    }
+
+    .form-select {
+      border: 1px solid #dee2e6 !important;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+  }
+
+  /* Alert */
+  .alert {
+    border-radius: 10px;
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    background: rgba(220, 53, 69, 0.05);
+    color: #721c24;
+  }
+
+  /* Card Styling */
+  .card {
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+
+    &:hover {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      border-bottom: 1px solid #e9ecef !important;
+
+      h5 {
+        font-size: 1.05rem;
+        color: #1a1a1a;
+        font-weight: 600;
+        letter-spacing: 0.3px;
+      }
+
+      small {
+        font-size: 0.85rem;
+        font-weight: 500;
+      }
+    }
+
+    .card-body {
+      padding: 0;
+    }
+  }
+
+  /* Table Styling */
+  .table-responsive {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 360px);
+
+    .table {
+      margin-bottom: 0;
+
+      thead {
+        background: #f8f9fa;
+        border-bottom: 2px solid #dee2e6;
+
+        th {
+          border: none;
+          padding: 0.4rem 0.6rem;
+          font-size: 0.72rem;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+          color: #6c757d;
+          font-weight: 600;
+          background: #f8f9fa;
+        }
+      }
+
+      tbody {
+        tr {
+          transition: all 0.2s ease;
+          border-bottom: 1px solid #e9ecef;
+
+          &:hover {
+            background-color: #f8f9fa;
+          }
+
+          td {
+            border: none;
+            padding: 0.35rem 0.6rem;
+            vertical-align: middle;
+            color: #495057;
+            font-size: 0.82rem;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  /* Avatar Style */
+  .avatar-sm {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  /* Badge Styling */
+  .badge {
+    padding: 0.5rem 0.8rem;
+    font-weight: 600;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  /* Loading Spinner */
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* Empty State */
+  .bi-inbox {
+    opacity: 0.3;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .audit-logs-container {
+    .page-header {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.9rem;
+      }
+    }
+
+    .filter-section {
+      padding: 1rem;
+    }
+
+    .table-responsive {
+      font-size: 0.9rem;
+
+      .table thead th,
+      .table td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+  }
+}

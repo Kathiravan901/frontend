@@ -1,0 +1,110 @@
+<div class="create-user-container">
+  <!-- Page Header -->
+  <div class="page-header mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1 class="h2 fw-bold text-dark mb-1">
+          <i class="bi bi-person-plus-fill text-primary me-2"></i>Create New User
+        </h1>
+        <p class="text-muted">Add a new user to the system</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-circle me-2"></i>
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-circle me-2"></i>
+      {{ successMessage }}
+      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+  }
+
+  <!-- Form Card -->
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-4">
+      <form [formGroup]="userForm" (ngSubmit)="submit()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="displayName" class="form-label fw-bold">Display Name</label>
+            <input id="displayName" class="form-control" formControlName="displayName" type="text" placeholder="Enter display name" />
+            @if (userForm.get('displayName')?.invalid && userForm.get('displayName')?.touched) {
+              <div class="invalid-feedback d-block">
+                <i class="bi bi-exclamation-circle me-1"></i>Display name is required.
+              </div>
+            }
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="email" class="form-label fw-bold">Email</label>
+            <input id="email" class="form-control" formControlName="email" type="email" placeholder="Enter email address" />
+            @if (userForm.get('email')?.invalid && userForm.get('email')?.touched) {
+              <div class="invalid-feedback d-block">
+                <i class="bi bi-exclamation-circle me-1"></i>Please enter a valid email.
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="password" class="form-label fw-bold">Password</label>
+            <input id="password" class="form-control" formControlName="password" type="password" placeholder="Enter password" />
+            @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
+              <div class="invalid-feedback d-block">
+                <i class="bi bi-exclamation-circle me-1"></i>Password must be at least 6 characters.
+              </div>
+            }
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="phoneNumber" class="form-label fw-bold">Phone Number</label>
+            <input id="phoneNumber" class="form-control" formControlName="phoneNumber" type="text" placeholder="Enter phone number" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="roleName" class="form-label fw-bold">Role Name</label>
+            <select id="roleName" class="form-select" formControlName="roleName">
+              <option value="" disabled>Select role</option>
+              @for (role of roleOptions; track role) {
+                <option [value]="role">{{ role }}</option>
+              }
+            </select>
+            @if (userForm.get('roleName')?.invalid && userForm.get('roleName')?.touched) {
+              <div class="invalid-feedback d-block">
+                <i class="bi bi-exclamation-circle me-1"></i>Role is required.
+              </div>
+            }
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label for="status" class="form-label fw-bold">Status</label>
+            <select id="status" class="form-select" formControlName="status">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-end mt-4">
+          <button class="btn btn-secondary" type="button" (click)="cancel()">
+            <i class="bi bi-arrow-left me-2"></i>Back to Users
+          </button>
+          <button class="btn btn-primary" type="submit" [disabled]="isSubmitting || userForm.invalid">
+            <i class="bi bi-person-plus me-2"></i>{{ isSubmitting ? 'Creating...' : 'Create User' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="lanes-table-container">
+  @if (isLoading) {
+    <div class="loading">
+      <p>Loading lanes...</p>
+    </div>
+  }
+
+  @if (!isLoading && lanes.length === 0) {
+    <div class="no-data">
+      <p>No lanes available.</p>
+    </div>
+  }
+
+  @if (!isLoading && lanes.length > 0) {
+    <div class="table-scroll">
+      <table class="lanes-table">
+        <thead>
+          <tr>
+            <th>From Location</th>
+            <th>To Location</th>
+            <th>Mode</th>
+            <th>Transit Time (Days)</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (lane of lanes; track lane.laneId) {
+            <tr>
+          <td>{{ getLocationName(lane.originLocationId) }}</td>
+          <td>{{ getLocationName(lane.destinationLocationId) }}</td>
+          <td>{{ lane.mode }}</td>
+          <td>{{ lane.transitTimeDays }}</td>
+          <td>
+            <button (click)="onEdit(lane)" class="btn btn-sm btn-primary">Edit</button>
+            <button (click)="onDelete(lane.laneId)" class="btn btn-sm btn-danger">Delete</button>
+          </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

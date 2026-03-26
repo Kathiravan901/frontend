@@ -1,0 +1,154 @@
+.add-order {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  max-height: calc(100vh - 145px);
+  overflow: hidden;
+}
+
+.add-order h2 {
+  margin: 0 0 10px 0;
+  color: #1a202c;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.add-order h3 {
+  margin: 10px 0 8px 0;
+  color: #2d3748;
+  font-size: 0.95rem;
+}
+
+.add-order form {
+  max-height: calc(100vh - 245px);
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.form-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 3px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #2d3748;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+input, select {
+  padding: 6px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f7fafc;
+  font-size: 0.85rem;
+  color: #2d3748;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.order-line {
+  border: 1px solid #e2e8f0;
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.form-actions {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #edf2f7;
+  position: sticky;
+  bottom: 0;
+  background: white;
+}
+
+button {
+  padding: 6px 10px;
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-submit {
+  background-color: #4f46e5;
+}
+
+.btn-submit:hover {
+  background-color: #4338ca;
+}
+
+.btn-add-line {
+  background-color: #16a34a;
+}
+
+.btn-add-line:hover {
+  background-color: #15803d;
+}
+
+.btn-remove-line {
+  background-color: #dc3545;
+}
+
+.btn-remove-line:hover {
+  background-color: #b02a37;
+}
+
+.success {
+  color: #166534;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+.error {
+  color: #b91c1c;
+  margin-top: 8px;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .add-order {
+    padding: 10px;
+    max-height: calc(100vh - 120px);
+  }
+
+  .add-order form {
+    max-height: calc(100vh - 220px);
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

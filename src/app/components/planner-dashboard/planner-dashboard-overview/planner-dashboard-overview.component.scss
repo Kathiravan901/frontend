@@ -1,0 +1,107 @@
+.planner-dashboard-overview {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+
+  .page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .stat-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb !important;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .card-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #6b7280;
+    }
+
+    .card-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.4rem;
+
+      &.bg-warning  { background-color: #f59e0b; }
+      &.bg-danger   { background-color: #ef4444; }
+      &.bg-success  { background-color: #10b981; }
+      &.bg-info     { background-color: #4f46e5; }
+    }
+  }
+
+  .card {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+
+    .card-header {
+      background-color: #f3f4f6;
+      font-weight: 600;
+      color: #1f2937;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 14px 16px;
+    }
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 480px);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    background-color: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    font-weight: 600;
+    color: #1f2937;
+    padding: 10px 12px;
+    font-size: 0.875rem;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  tbody td {
+    padding: 10px 12px;
+    font-size: 0.875rem;
+    color: #374151;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+  }
+
+  tbody tr:hover { background-color: #f9fafb; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+  }
+}

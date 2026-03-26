@@ -1,0 +1,56 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h2 class="profile-title">My Profile</h2>
+  </div>
+
+  <!-- Alert Messages -->
+  @if (successMessage) {
+    <div class="alert alert-success">
+      <i class="bi bi-check-circle"></i>
+      {{ successMessage }}
+    </div>
+  }
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      <i class="bi bi-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Profile Card -->
+  <div class="profile-card">
+    <!-- Profile Avatar Section -->
+    <div class="profile-avatar-section">
+      <div class="avatar-circle">
+        {{ getInitials() }}
+      </div>
+      <div class="profile-summary">
+        <h3 class="profile-name">{{ userProfile.displayName || userProfile.email }}</h3>
+        <p class="profile-role">
+          <span class="role-badge">{{ userProfile.role }}</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Profile Information -->
+    <div class="profile-info">
+      <div class="info-group">
+        <div class="info-item">
+          <label class="info-label">Full Name</label>
+          <p class="info-value">{{ userProfile.displayName || 'N/A' }}</p>
+        </div>
+        <div class="info-item">
+          <label class="info-label">Email</label>
+          <p class="info-value">{{ userProfile.email || 'N/A' }}</p>
+        </div>
+      </div>
+
+      <div class="info-group">
+        <div class="info-item">
+          <label class="info-label">Role</label>
+          <p class="info-value">{{ userProfile.role || 'N/A' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

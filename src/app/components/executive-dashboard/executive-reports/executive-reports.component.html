@@ -1,0 +1,150 @@
+<div class="reports-section">
+  <h2 class="section-title">Reports</h2>
+
+  <!-- Filter Section -->
+  <div class="card mb-2">
+    <div class="card-body py-2">
+      <form [formGroup]="filterForm" (ngSubmit)="onFilterChange()">
+        <div class="row g-2 align-items-end">
+          <div class="col-md-3">
+            <label for="scope" class="form-label mb-1 small">Scope</label>
+            <select id="scope" class="form-select form-select-sm" formControlName="scope">
+              <option value="Network">Network</option>
+              <option value="Lane">Lane</option>
+              <option value="Location">Location</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label for="fromDate" class="form-label mb-1 small">From Date</label>
+            <input type="date" id="fromDate" class="form-control form-control-sm" formControlName="fromDate">
+          </div>
+          <div class="col-md-2">
+            <label for="toDate" class="form-label mb-1 small">To Date</label>
+            <input type="date" id="toDate" class="form-control form-control-sm" formControlName="toDate">
+          </div>
+          <div class="col-md-2">
+            <label for="bucket" class="form-label mb-1 small">Bucket</label>
+            <select id="bucket" class="form-select form-select-sm" formControlName="bucket">
+              <option value="Day">Daily</option>
+              <option value="Week">Weekly</option>
+              <option value="Month">Monthly</option>
+            </select>
+          </div>
+          <div class="col-md-3 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary btn-sm flex-grow-1">
+              <i class="bi bi-funnel"></i> Apply
+            </button>
+            <button type="button" class="btn btn-success btn-sm" (click)="generateReport()" [disabled]="isGenerating">
+              <i class="bi" [ngClass]="isGenerating ? 'bi-hourglass-split' : 'bi-file-earmark-plus'"></i>
+              {{ isGenerating ? 'Generating...' : 'Generate' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success Message -->
+  @if (successMessage) {
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="bi bi-check-circle"></i> {{ successMessage }}
+      <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+    </div>
+  }
+
+  <!-- Error Message -->
+  @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-circle"></i> {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+  }
+
+  <!-- Loading Spinner -->
+  @if (isLoading) {
+    <div class="d-flex justify-content-center align-items-center" style="height: 300px">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Reports Table -->
+  @if (!isLoading && reports.length > 0) {
+    <div class="card">
+      <div class="card-header bg-light py-2">
+        <h6 class="mb-0 small fw-bold">Generated Reports ({{ reports.length }})</h6>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive reports-scroll">
+          <table class="table table-hover table-sm mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Report ID</th>
+                <th>Scope</th>
+                <th>OTIF (%)</th>
+                <th>Fill Rate (%)</th>
+                <th>Inventory Turns</th>
+                <th>Delay Rate (%)</th>
+                <th>Generated Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (report of reports; track report.reportId) {
+                <tr>
+                  <td>
+                    <strong>#{{ report.reportId }}</strong>
+                  </td>
+                  <td>
+                    <span class="badge bg-info">{{ report.scope }}</span>
+                  </td>
+                  <td>
+                    <span [ngClass]="report.otif >= 95 ? 'text-success' : 'text-warning'">
+                      {{ report.otif | number:'1.1-1' }}%
+                    </span>
+                  </td>
+                  <td>
+                    <span [ngClass]="report.fillRate >= 95 ? 'text-success' : 'text-warning'">
+                      {{ report.fillRate | number:'1.1-1' }}%
+                    </span>
+                  </td>
+                  <td>
+                    {{ report.inventoryTurn | number:'1.1-2' }}
+                  </td>
+                  <td>
+                    <span [ngClass]="report.delayRate <= 5 ? 'text-success' : 'text-danger'">
+                      {{ report.delayRate | number:'1.1-1' }}%
+                    </span>
+                  </td>
+                  <td>
+                    {{ report.generatedDate | date:'short' }}
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-sm btn-outline-primary"
+                      (click)="downloadReport(report)"
+                      title="Download Report"
+                    >
+                      <i class="bi bi-download"></i> Download
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading && reports.length === 0) {
+    <div class="card">
+      <div class="card-body text-center py-5 text-muted">
+        <i class="bi bi-file-earmark-text" style="font-size: 2.5rem; margin-bottom: 1rem; display: block;"></i>
+        <p class="mb-0">No reports found. Generate a new report from the Dashboard to see it here.</p>
+      </div>
+    </div>
+  }
+</div>

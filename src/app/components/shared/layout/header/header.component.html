@@ -1,0 +1,41 @@
+<header class="header">
+  <div class="header-content">
+    <!-- Logo Section -->
+    <div class="header-left">
+      <a href="/" class="logo">
+        <i class="bi bi-boxes"></i>
+        <span class="logo-text">SupplyChainX</span>
+      </a>
+    </div>
+
+    <!-- Spacer -->
+    <div class="header-spacer"></div>
+
+    <!-- User Actions -->
+    <div class="header-right">
+      <!-- User Info -->
+      <div class="user-info-header">
+        <div class="user-avatar-icon">
+          <i class="bi bi-person-circle"></i>
+        </div>
+        <div class="user-details">
+          <p class="user-name-header">{{ userName }}</p>
+          <p class="user-role-header">{{ userRole }}</p>
+        </div>
+      </div>
+
+      <!-- Notification Center -->
+      <app-notification-center></app-notification-center>
+      
+      <a (click)="goToProfile()" class="action-link" title="View Profile">
+        <i class="bi bi-person"></i>
+        <span>View Profile</span>
+      </a>
+      <button class="action-btn logout-btn" (click)="logout()" title="Logout">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
+</header>
+

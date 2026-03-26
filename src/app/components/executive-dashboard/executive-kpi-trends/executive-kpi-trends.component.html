@@ -1,0 +1,17 @@
+@if (trendsData) {
+  <h2 class="section-title">Performance Trends</h2>
+
+  <!-- Performance Trends Child Component -->
+  <div class="row g-3 mb-4">
+    <div class="col-12">
+      <app-performance-trends [trendsData]="trendsData"></app-performance-trends>
+    </div>
+  </div>
+
+  <!-- Top Inventory Turns Child Component -->
+  <div class="row g-3">
+    <div class="col-12">
+      <app-top-inventory-turns [trendsData]="trendsData"></app-top-inventory-turns>
+    </div>
+  </div>
+}

@@ -1,0 +1,41 @@
+<div class="locations-table-container">
+  @if (isLoading) {
+    <div class="loading">
+      <p>Loading locations...</p>
+    </div>
+  }
+
+  @if (!isLoading && locations.length === 0) {
+    <div class="no-data">
+      <p>No locations available.</p>
+    </div>
+  }
+
+  @if (!isLoading && locations.length > 0) {
+    <div class="table-scroll">
+      <table class="locations-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Region</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (location of locations; track location.locationId) {
+            <tr>
+          <td>{{ location.name }}</td>
+          <td>{{ location.type }}</td>
+          <td>{{ location.region }}</td>
+          <td>
+            <button (click)="onEdit(location)" class="btn btn-sm btn-primary">Edit</button>
+            <button (click)="onDelete(location.locationId)" class="btn btn-sm btn-danger">Delete</button>
+          </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

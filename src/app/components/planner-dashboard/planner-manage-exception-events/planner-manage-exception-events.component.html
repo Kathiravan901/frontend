@@ -1,0 +1,173 @@
+<div class="manage-exception-events">
+  <!-- Header Section -->
+  <div class="page-header">
+    <h2>Exception Events</h2>
+    <button class="btn-create-top" (click)="openCreate()" type="button">
+      <i class="bi bi-plus-circle"></i> Create New Event
+    </button>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filters">
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Type</label>
+          <select formControlName="type">
+            <option value="">All Types</option>
+            @for (type of exceptionTypes; track type) {
+              <option [value]="type">{{ type }}</option>
+            }
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Severity</label>
+          <select formControlName="severity">
+            <option value="">All Severities</option>
+            @for (severity of exceptionSeverities; track severity) {
+              <option [value]="severity">{{ severity }}</option>
+            }
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Status</label>
+          <select formControlName="status">
+            <option value="">All Statuses</option>
+            @for (status of actionStatuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+        <button class="filter-btn" type="submit"><i class="bi bi-funnel"></i> Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Messages -->
+  @if (errorMessage) {
+    <div class="alert-msg error">{{ errorMessage }} <span (click)="errorMessage = ''">&times;</span></div>
+  }
+  @if (successMessage) {
+    <div class="alert-msg success">{{ successMessage }} <span (click)="successMessage = ''">&times;</span></div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="loading">Loading exception events...</div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading && events.length === 0) {
+    <div class="empty-state">
+      <p>No exception events found. <button type="button" class="link-btn" (click)="openCreate()">Create New Event</button></p>
+    </div>
+  }
+
+  <!-- Exception Events Table -->
+  @if (!isLoading && events.length > 0) {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Reference</th>
+            <th>Detected Date</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (event of events; track event.exceptionId) {
+            <tr>
+              <td><span class="badge badge-info">{{ event.type }}</span></td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'badge-danger': event.severity === 'High',
+                  'badge-warning': event.severity === 'Medium',
+                  'badge-success': event.severity === 'Low'
+                }">{{ event.severity }}</span>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="getStatusClass(event.status)">{{ event.status }}</span>
+              </td>
+              <td>{{ event.referenceType }} #{{ event.referenceId }}</td>
+              <td>{{ event.detectedDate | date:'MMM dd, yyyy' }}</td>
+              <td class="actions-cell">
+                <button class="action-btn edit-btn" (click)="openEdit(event)">
+                  <i class="bi bi-pencil"></i> Edit
+                </button>
+                <button class="action-btn delete-btn" (click)="deleteEvent(event.exceptionId)">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Create/Edit Modal -->
+  @if (showForm) {
+    <div class="modal-overlay" (click)="closeForm()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <h3>{{ isEditing ? 'Edit Exception Event' : 'Create Exception Event' }}</h3>
+        <form [formGroup]="editForm" (ngSubmit)="save()">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Type <span class="required">*</span></label>
+              <select formControlName="type" required>
+                <option value="">Select Type</option>
+                @for (type of exceptionTypes; track type) {
+                  <option [value]="type">{{ type }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Severity <span class="required">*</span></label>
+              <select formControlName="severity" required>
+                <option value="">Select Severity</option>
+                @for (severity of exceptionSeverities; track severity) {
+                  <option [value]="severity">{{ severity }}</option>
+                }
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+          <div class="form-group">
+            <label>Status <span class="required">*</span></label>
+            <select formControlName="status" required>
+              <option value="">Select Status</option>
+              @for (status of actionStatuses; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Reference Type <span class="required">*</span></label>
+            <input type="text" formControlName="referenceType" placeholder="Order / Shipment / Inventory" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Reference ID <span class="required">*</span></label>
+            <input type="number" formControlName="referenceId" required />
+          </div>
+          <div class="form-group">
+            <label>Detected Date <span class="required">*</span></label>
+            <input type="date" formControlName="detectedDate" required />
+          </div>
+        </div>
+        @if (errorMessage) {
+          <div class="alert-msg error">{{ errorMessage }}</div>
+        }
+        <div class="modal-actions">
+          <button type="submit" [disabled]="editForm.invalid">{{ isEditing ? 'Update Event' : 'Create Event' }}</button>
+          <button type="button" (click)="closeForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+    </div>
+  }
+</div>

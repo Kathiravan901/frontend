@@ -1,0 +1,187 @@
+<div class="dispatch-orders">
+  <div class="header-section mb-4">
+    <div>
+      <h2 class="h4 fw-bold mb-1">Dispatch Orders</h2>
+      <p class="text-muted mb-0">Ready-to-dispatch orders with controlled carrier assignment.</p>
+    </div>
+    <span class="header-pill">
+      <i class="bi bi-truck me-1"></i> Pending: {{ orders.length }}
+    </span>
+  </div>
+
+  <div class="kpi-grid mb-4">
+    @if (orders.length > 0) {
+      <div class="kpi-card total">
+        <div class="kpi-label">Total Pending</div>
+        <div class="kpi-value">{{ orders.length }}</div>
+      </div>
+      <div class="kpi-card po">
+        <div class="kpi-label">Purchase Orders</div>
+        <div class="kpi-value">{{ getOrderTypeCount('PO') }}</div>
+      </div>
+      <div class="kpi-card so">
+        <div class="kpi-label">Sales Orders</div>
+        <div class="kpi-value">{{ getOrderTypeCount('SO') }}</div>
+      </div>
+      <div class="kpi-card transfer">
+        <div class="kpi-label">Transfers</div>
+        <div class="kpi-value">{{ getOrderTypeCount('Transfer') }}</div>
+      </div>
+    }
+  </div>
+
+  @if (successMessage) {
+    <div class="alert alert-success py-2" role="alert">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger py-2" role="alert">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Pending Orders for Dispatch -->
+  <div class="card table-card">
+    <div class="card-header bg-light">
+      <h5 class="mb-0">Pending Orders (Ready for Dispatch)</h5>
+    </div>
+    <div class="card-body">
+      @if (orders.length > 0) {
+        <div class="table-responsive list-scroll">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr class="table-light">
+                <th>Order ID</th>
+                <th>Type</th>
+                <th>Order Date</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of orders; track order.orderId) {
+                <tr>
+                  <td>{{ order.orderId }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="order.orderType === 'PO' ? 'bg-primary' : order.orderType === 'SO' ? 'bg-success' : 'bg-info'">
+                      {{ order.orderType }}
+                    </span>
+                  </td>
+                  <td>{{ order.orderDateUtc | date:'shortDate' }}</td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-primary" (click)="openDispatchForm(order)">
+                      <i class="bi bi-send"></i> Dispatch
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (isLoading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      }
+
+      @if (!isLoading && orders.length === 0) {
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+          <p class="mt-2">No pending orders available for dispatch</p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Dispatch Form Modal -->
+  @if (showDispatchForm) {
+    <div class="modal d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+      <div class="modal-dialog dispatch-modal modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Dispatch Order</h5>
+            <button type="button" class="btn-close" (click)="closeDispatchForm()"></button>
+          </div>
+          <form [formGroup]="dispatchForm" (ngSubmit)="onDispatch()">
+            <div class="modal-body">
+              @if (selectedOrder) {
+                <div class="order-summary mb-3">
+                  <div>
+                    <div class="summary-label">Selected Order</div>
+                    <div class="summary-value">#{{ selectedOrder.orderId }}</div>
+                  </div>
+                  <span class="badge" [ngClass]="selectedOrder.orderType === 'PO' ? 'bg-primary' : selectedOrder.orderType === 'SO' ? 'bg-success' : 'bg-info'">
+                    {{ selectedOrder.orderType }}
+                  </span>
+                </div>
+              }
+              
+              <div class="mb-3">
+                <label for="carrierPartnerId" class="form-label">Carrier Partner <span class="text-danger">*</span></label>
+                <select id="carrierPartnerId" class="form-select" formControlName="carrierPartnerId" required>
+                  <option value="">Select Partner</option>
+                  @for (partner of filteredPartners; track partner.partnerId) {
+                    <option [value]="partner.partnerId">{{ partner.partnerName }}</option>
+                  }
+                </select>
+                <small class="text-muted d-block mt-1">
+                  @if (filteredPartners.length > 0) {
+                    {{ filteredPartners.length }} partner(s) available
+                  }
+                  @if (filteredPartners.length === 0) {
+                    No partners available for this order type
+                  }
+                </small>
+              </div>
+
+              <div class="mb-3">
+                <label for="shipmentRefNo" class="form-label">Shipment Reference No</label>
+                <input type="text" id="shipmentRefNo" class="form-control" formControlName="shipmentRefNo" placeholder="e.g., SHIP-001">
+              </div>
+
+              <div class="mb-3">
+                <label for="dispatchDateUtc" class="form-label">Dispatch Date <span class="text-danger">*</span></label>
+                <input type="date" id="dispatchDateUtc" class="form-control" formControlName="dispatchDateUtc" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="estimatedArrivalUtc" class="form-label">Estimated Arrival</label>
+                <input type="date" id="estimatedArrivalUtc" class="form-control" formControlName="estimatedArrivalUtc">
+              </div>
+
+              @if (successMessage) {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  {{ successMessage }}
+                  <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+                </div>
+              }
+              @if (errorMessage) {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  {{ errorMessage }}
+                  <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+                </div>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="closeDispatchForm()">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="dispatchForm.invalid || isDispatching">
+                @if (isDispatching) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Dispatch Order
+                }
+                @if (!isDispatching) {
+                  Dispatch Order
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+</div>

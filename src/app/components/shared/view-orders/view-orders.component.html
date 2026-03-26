@@ -1,0 +1,210 @@
+<div class="view-orders-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="bi bi-box-seam"></i> Order Management
+    </h1>
+    <p class="page-subtitle">View and manage all your orders in one place</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-card">
+    <div class="filters-title">
+      <i class="bi bi-funnel"></i> Filters
+    </div>
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="orderType">Order Type</label>
+        <select id="orderType" [(ngModel)]="filterOrderType" (change)="filterOrders()">
+          <option value="">All Types</option>
+          <option value="PO">Purchase Order</option>
+          <option value="SO">Sales Order</option>
+          <option value="Transfer">Transfer</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="status">Status</label>
+        <select id="status" [(ngModel)]="filterStatus" (change)="filterOrders()">
+          <option value="">All Status</option>
+          @for (status of statusOptions; track status) {
+            <option [value]="status">{{ getStatusLabel(status) }}</option>
+          }
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="partner">Partner</label>
+        <select id="partner" [(ngModel)]="filterPartnerId" (change)="filterOrders()">
+          <option value="">All Partners</option>
+          @for (partner of partners; track partner.partnerId) {
+            <option [value]="partner.partnerId">{{ partner.partnerName }}</option>
+          }
+        </select>
+      </div>
+      <button class="btn-reset" type="button" (click)="resetFilters()">
+        <i class="bi bi-arrow-clockwise"></i> Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  @if (errorMessage) {
+    <div class="alert-container">
+      <div class="alert alert-danger">
+        <i class="bi bi-exclamation-circle"></i>
+        {{ errorMessage }}
+      </div>
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading orders...</p>
+    </div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading && filteredOrders.length === 0) {
+    <div class="empty-state">
+      <i class="bi bi-inbox"></i>
+      <h3>No Orders Found</h3>
+      <p>Try adjusting your filters or create a new order</p>
+    </div>
+  }
+
+  <!-- Orders List -->
+  @if (!isLoading && filteredOrders.length > 0) {
+    <div class="orders-list">
+    <div class="orders-count">Showing {{ filteredOrders.length }} order(s)</div>
+
+    <div class="orders-list-table">
+      <table class="table mb-0">
+        <thead>
+          <tr>
+            <th>Order #</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Partner</th>
+            <th>Ordered</th>
+            <th class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of filteredOrders; track order.orderId) {
+            <tr>
+              <td class="fw-semibold">{{ order.orderId }}</td>
+              <td>
+                <span class="badge order-type" [ngClass]="'bg-' + getOrderTypeColor(order.orderType)">
+                  {{ getOrderTypeLabel(order.orderType) }}
+                </span>
+              </td>
+              <td>
+                <span class="badge status-badge" [ngClass]="'badge-' + getStatusClass(order.status)">
+                  {{ getStatusLabel(order.status) }}
+                </span>
+              </td>
+              <td>{{ getPartnerName(order.partnerId) || 'N/A' }}</td>
+              <td>{{ order.orderDateUtc | date: 'MMM dd, yyyy' }}</td>
+              <td class="text-right">
+                <button class="btn-view" type="button" (click)="toggleDetails(order)">
+                  <i class="bi" [ngClass]="selectedOrder?.orderId === order.orderId ? 'bi-eye-slash' : 'bi-eye'"></i>
+                  {{ selectedOrder?.orderId === order.orderId ? 'Hide Details' : 'View Details' }}
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (selectedOrder) {
+      <div class="details-modal-backdrop" (click)="closeDetails()">
+        <div class="details-modal" (click)="$event.stopPropagation()">
+          <div class="order-card modal-order-card">
+          <div class="order-header">
+            <div class="order-info">
+              <h3 class="order-id">
+                <i class="bi bi-box"></i> Order #{{ selectedOrder.orderId }}
+              </h3>
+              <div class="order-badges">
+                <span class="badge order-type" [ngClass]="'bg-' + getOrderTypeColor(selectedOrder.orderType)">
+                  {{ getOrderTypeLabel(selectedOrder.orderType) }}
+                </span>
+                <span class="badge status-badge" [ngClass]="'badge-' + getStatusClass(selectedOrder.status)">
+                  {{ getStatusLabel(selectedOrder.status) }}
+                </span>
+              </div>
+            </div>
+            <div class="order-dates">
+              <div class="date-item">
+                <span class="date-label">Ordered</span>
+                <span class="date-value">{{ selectedOrder.orderDateUtc | date: 'MMM dd, yyyy' }}</span>
+              </div>
+              @if (selectedOrder.expectedDeliveryDateUtc) {
+                <div class="date-item">
+                  <span class="date-label">Expected Delivery</span>
+                  <span class="date-value">{{ selectedOrder.expectedDeliveryDateUtc | date: 'MMM dd, yyyy' }}</span>
+                </div>
+              }
+            </div>
+            <button class="modal-close-inline" type="button" (click)="closeDetails()" aria-label="Close details">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+
+          <div class="order-details">
+            <div class="detail-item">
+              <span class="detail-label">Partner</span>
+              <span class="detail-value">{{ getPartnerName(selectedOrder.partnerId) || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Items</span>
+              <span class="detail-value">
+                <span class="items-badge">{{ selectedOrder.lines.length || 0 }}</span>
+              </span>
+            </div>
+          </div>
+
+          @if (selectedOrder.lines && selectedOrder.lines.length > 0) {
+            <div class="items-section">
+              <div class="items-header">
+                <h4 class="items-title">Order Items</h4>
+                <span class="items-count">{{ selectedOrder.lines.length }} item(s)</span>
+              </div>
+              <table class="items-table">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th class="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (line of selectedOrder.lines; track line.itemId) {
+                    <tr>
+                      <td class="item-name">{{ getItemName(line.itemId || 0) }}</td>
+                      <td class="quantity"><strong>{{ line.qtyOrdered }}</strong></td>
+                      <td class="price">${{ line.unitPrice | number: '1.2-2' }}</td>
+                      <td class="total text-right"><strong>${{ (line.qtyOrdered * (line.unitPrice || 0)) | number: '1.2-2' }}</strong></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+
+          @if (!selectedOrder.lines || selectedOrder.lines.length === 0) {
+            <div class="no-items">
+              <i class="bi bi-box-open"></i>
+              <p>No items in this order</p>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+  </div>
+}
+

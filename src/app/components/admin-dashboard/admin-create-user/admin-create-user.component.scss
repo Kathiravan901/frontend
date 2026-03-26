@@ -1,0 +1,49 @@
+.create-user {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .form-row {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  input,
+  select {
+    padding: 0.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+  }
+
+  .form-actions {
+    margin-top: 0.5rem;
+
+    button {
+      padding: 0.65rem 1rem;
+    }
+  }
+
+  .success {
+    color: #006600;
+  }
+
+  .error {
+    color: #a80000;
+  }
+}

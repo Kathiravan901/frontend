@@ -1,0 +1,169 @@
+<div class="manage-inventory">
+  <div class="header-section">
+    <h2>Inventory Management</h2>
+    @if (!isLoading && inventory.length > 0) {
+      <button 
+        class="btn-create-top" 
+        (click)="openCreateForm()"
+        type="button">
+        <i class="bi bi-plus-circle"></i> Create New Inventory
+      </button>
+    }
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <form [formGroup]="filters" (ngSubmit)="onFilter()">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label for="locationId">Location:</label>
+          <select id="locationId" formControlName="locationId">
+            <option value="">All Locations</option>
+            @for (location of locations; track location.locationId) {
+              <option [value]="location.locationId">{{ location.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="itemId">Item:</label>
+          <select id="itemId" formControlName="itemId">
+            <option value="">All Items</option>
+            @for (item of items; track item.itemId) {
+              <option [value]="item.itemId">{{ item.itemName }}</option>
+            }
+          </select>
+        </div>
+        <button type="submit">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Inventory Table or Empty State -->
+  @if (!isLoading && inventory.length > 0) {
+    <div class="inventory-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Item</th>
+            <th>Quantity on Hand</th>
+            <th>Safety Stock</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of inventory; track item.inventoryId) {
+            <tr>
+              <td>{{ getLocationName(item.locationId) }}</td>
+              <td>{{ getItemName(item.itemId) }}</td>
+              <td>{{ item.quantityOnHand }}</td>
+              <td>{{ item.safetyStock }}</td>
+              <td [class]="item.quantityOnHand <= item.safetyStock ? 'low-stock' : 'in-stock'">
+                {{ item.quantityOnHand <= item.safetyStock ? 'Low Stock' : 'In Stock' }}
+              </td>
+              <td>
+                <button (click)="openAdjustForm(item)">Adjust</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+    </table>
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="loading">Loading inventory...</div>
+  }
+
+  @if (!isLoading && inventory.length === 0) {
+    <div class="empty-state">
+      <p>No inventory found. <button type="button" (click)="openCreateForm()" class="link-btn">Create New Inventory</button></p>
+    </div>
+  }
+
+  <!-- Adjust Form Modal -->
+  @if (showAdjustForm) {
+    <div class="modal-overlay" (click)="closeAdjustForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>Adjust Inventory</h3>
+        @if (selectedInventory) {
+          <p>
+            <strong>{{ getItemName(selectedInventory.itemId) }}</strong> at
+            <strong>{{ getLocationName(selectedInventory.locationId) }}</strong>
+            <br>
+            Current Quantity: {{ selectedInventory.quantityOnHand }}
+          </p>
+        }
+        <form [formGroup]="adjustForm" (ngSubmit)="onAdjust()">
+          <div class="form-group">
+            <label for="deltaQty">Quantity Change:</label>
+            <input type="number" id="deltaQty" formControlName="deltaQty" required>
+            <small>Use positive numbers to add stock, negative to reduce</small>
+          </div>
+          <div class="form-group">
+            <label for="safetyStock">Safety Stock:</label>
+            <input type="number" id="safetyStock" formControlName="safetyStock" min="0">
+          </div>
+          <div class="form-actions">
+            <button type="submit" [disabled]="adjustForm.invalid || isAdjusting">Adjust</button>
+            <button type="button" (click)="closeAdjustForm()">Cancel</button>
+          </div>
+        </form>
+        @if (successMessage) {
+          <div class="success">{{ successMessage }}</div>
+        }
+        @if (errorMessage) {
+          <div class="error">{{ errorMessage }}</div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Create Inventory Modal -->
+  @if (showCreateForm) {
+    <div class="modal-overlay" (click)="closeCreateForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>Create New Inventory</h3>
+        <form [formGroup]="createForm" (ngSubmit)="onCreate()">
+          <div class="form-group">
+            <label for="locationId">Location:</label>
+            <select id="locationId" formControlName="locationId" required>
+              <option value="">Select Location</option>
+              @for (location of locations; track location.locationId) {
+                <option [value]="location.locationId">{{ location.name }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="itemId">Item:</label>
+            <select id="itemId" formControlName="itemId" required>
+              <option value="">Select Item</option>
+              @for (item of items; track item.itemId) {
+                <option [value]="item.itemId">{{ item.itemName }}</option>
+              }
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="initialQty">Initial Quantity:</label>
+            <input type="number" id="initialQty" formControlName="initialQty" required min="0">
+          </div>
+          <div class="form-group">
+            <label for="createSafetyStock">Safety Stock:</label>
+            <input type="number" id="createSafetyStock" formControlName="safetyStock" min="0">
+          </div>
+          <div class="form-actions">
+            <button type="submit" [disabled]="createForm.invalid || isCreating">Create</button>
+            <button type="button" (click)="closeCreateForm()">Cancel</button>
+          </div>
+        </form>
+        @if (successMessage) {
+          <div class="success">{{ successMessage }}</div>
+        }
+        @if (errorMessage) {
+          <div class="error">{{ errorMessage }}</div>
+        }
+      </div>
+    </div>
+  }
+  

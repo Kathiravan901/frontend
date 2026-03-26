@@ -1,0 +1,63 @@
+@if (isVisible) {
+  <div class="form-container">
+    <div class="form-header">
+      <h3>{{ editingPartner ? 'Edit Partner' : 'Add New Partner' }}</h3>
+      <button (click)="onClose()" class="btn-close">&times;</button>
+    </div>
+
+    <form [formGroup]="partnerForm" (ngSubmit)="onSave()" class="partner-form">
+      <div class="form-group">
+        <label for="partnerName">Partner Name *</label>
+        <input
+          id="partnerName"
+          type="text"
+          formControlName="partnerName"
+          class="form-control"
+          placeholder="Enter partner name"
+          required
+        />
+        @if (partnerForm.get('partnerName')?.invalid && partnerForm.get('partnerName')?.touched) {
+          <div class="error-message">
+            Partner name is required
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="partnerType">Partner Type *</label>
+        <select id="partnerType" formControlName="partnerType" class="form-control" required>
+          <option value="">Select Type</option>
+          @for (type of partnerTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+        @if (partnerForm.get('partnerType')?.invalid && partnerForm.get('partnerType')?.touched) {
+          <div class="error-message">
+            Partner type is required
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status *</label>
+        <select id="status" formControlName="status" class="form-control" required>
+          @for (s of statuses; track s) {
+            <option [value]="s">{{ s }}</option>
+          }
+        </select>
+        @if (partnerForm.get('status')?.invalid && partnerForm.get('status')?.touched) {
+          <div class="error-message">
+            Status is required
+          </div>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="partnerForm.invalid" class="btn btn-primary">
+          {{ editingPartner ? 'Update' : 'Add' }} Partner
+        </button>
+        <button type="button" (click)="onClose()" class="btn btn-secondary">Cancel</button>
+      </div>
+    </form>
+  </div>
+}

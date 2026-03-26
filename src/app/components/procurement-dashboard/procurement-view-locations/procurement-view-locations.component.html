@@ -1,0 +1,78 @@
+<div class="view-locations-container">
+  <div class="header mb-4">
+    <div>
+      <h2 class="mb-1">Location Directory</h2>
+      <p class="text-muted mb-0">Operational locations used by procurement workflows.</p>
+    </div>
+  </div>
+
+  @if (!isLoading && locations.length > 0) {
+    <div class="kpi-grid mb-4">
+    <div class="kpi-card total">
+      <div class="kpi-label">Total Locations</div>
+      <div class="kpi-value">{{ locations.length }}</div>
+    </div>
+    <div class="kpi-card plant">
+      <div class="kpi-label">Plants</div>
+      <div class="kpi-value">{{ getTypeCount('Plant') }}</div>
+    </div>
+    <div class="kpi-card wh">
+      <div class="kpi-label">Warehouses</div>
+      <div class="kpi-value">{{ getTypeCount('Warehouse') }}</div>
+    </div>
+    <div class="kpi-card region">
+      <div class="kpi-label">DC</div>
+      <div class="kpi-value">{{ getTypeCount('DC') }}</div>
+      </div>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="loading">
+      <p>Loading locations...</p>
+    </div>
+  }
+
+  @if (!isLoading && locations.length === 0) {
+    <div class="no-data">
+      <p>No locations available.</p>
+    </div>
+  }
+
+  @if (!isLoading && locations.length > 0) {
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="locations-table table mb-0">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Region</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (location of locations; track location.locationId) {
+                <tr>
+              <td class="fw-semibold">{{ location.name }}</td>
+              <td>
+                <span class="badge" [ngClass]="'badge-' + getLocationTypeBadgeClass(location.type)">
+                  {{ getLocationTypeLabel(location.type) }}
+                </span>
+              </td>
+              <td>{{ location.region || '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</div>

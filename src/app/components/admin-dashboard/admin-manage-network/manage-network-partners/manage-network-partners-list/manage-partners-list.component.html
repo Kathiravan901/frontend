@@ -1,0 +1,44 @@
+<div class="partners-table-container">
+  @if (isLoading) {
+    <div class="loading">
+      <p>Loading partners...</p>
+    </div>
+  }
+
+  @if (!isLoading && partners.length === 0) {
+    <div class="no-data">
+      <p>No partners available.</p>
+    </div>
+  }
+
+  @if (!isLoading && partners.length > 0) {
+    <div class="table-scroll">
+      <table class="partners-table">
+        <thead>
+          <tr>
+            <th>Partner Name</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (partner of partners; track partner.partnerId) {
+            <tr>
+          <td>{{ partner.partnerName }}</td>
+          <td>{{ partner.partnerType }}</td>
+          <td>
+            <span [ngClass]="partner.status === 'Active' ? 'badge-success' : 'badge-danger'" class="badge">
+              {{ partner.status }}
+            </span>
+          </td>
+          <td>
+            <button (click)="onEdit(partner)" class="btn btn-sm btn-primary">Edit</button>
+          </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

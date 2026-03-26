@@ -1,0 +1,222 @@
+.dispatch-orders {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px;
+  color: #0f172a;
+
+  .header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 12px;
+
+    h2 {
+      margin-bottom: 0.5rem;
+      color: #0f172a;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+
+  .header-pill {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+    color: #3730a3;
+    border: 1px solid #c7d2fe;
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .kpi-grid {
+    display: grid;
+    gap: 0.65rem;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .kpi-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.7rem 0.8rem;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+
+    .kpi-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .kpi-value {
+      margin-top: 0.35rem;
+      font-size: 1.5rem;
+      line-height: 1;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    &.total { border-left: 4px solid #6366f1; }
+    &.po { border-left: 4px solid #2563eb; }
+    &.so { border-left: 4px solid #16a34a; }
+    &.transfer { border-left: 4px solid #0ea5e9; }
+  }
+
+  .card {
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    border-radius: 12px;
+  }
+
+  .card-header {
+    background-color: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .table-card {
+    background: #fff;
+  }
+
+  .list-scroll {
+    max-height: calc(100vh - 420px);
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .table {
+    margin-bottom: 0;
+    width: 100%;
+    table-layout: fixed;
+    font-size: 0.82rem;
+
+    thead th {
+      background-color: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      font-weight: 600;
+      color: #334155;
+      padding: 0.8rem;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    th:nth-child(1), td:nth-child(1) { width: 18%; }
+    th:nth-child(2), td:nth-child(2) { width: 18%; }
+    th:nth-child(3), td:nth-child(3) { width: 32%; }
+    th:nth-child(4), td:nth-child(4) { width: 32%; }
+
+    tbody td {
+      padding: 0.55rem;
+      vertical-align: middle;
+      border-color: #f1f5f9;
+    }
+
+    tbody tr:hover {
+      background-color: #f8fafc;
+    }
+  }
+
+  .badge {
+    font-size: 0.76rem;
+    padding: 0.3rem 0.55rem;
+  }
+
+  .modal {
+    display: block;
+  }
+
+  .modal-content {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.2);
+    max-height: 82vh;
+    overflow: hidden;
+  }
+
+  .dispatch-modal {
+    max-width: 560px;
+  }
+
+  .modal-header,
+  .modal-footer {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+  }
+
+  .modal-body {
+    overflow-y: auto;
+    max-height: calc(82vh - 128px);
+    padding: 0.9rem 1rem;
+  }
+
+  .order-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.7rem 0.85rem;
+    background: #f8fafc;
+
+    .summary-label {
+      color: #64748b;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .summary-value {
+      color: #0f172a;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+  }
+
+  .form-label {
+    font-weight: 500;
+    color: #334155;
+    margin-bottom: 0.5rem;
+
+    .text-danger {
+      color: #dc3545;
+    }
+  }
+
+  .form-select,
+  .form-control {
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+
+    &:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.2);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .dispatch-orders {
+    .header-section {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .kpi-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .table {
+      font-size: 0.82rem;
+    }
+  }
+}

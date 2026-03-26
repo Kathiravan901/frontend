@@ -1,0 +1,248 @@
+.manage-users-container {
+  .page-header {
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #6c757d;
+      margin-bottom: 0;
+    }
+  }
+
+  /* Search Input */
+  .input-group {
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8f9fa;
+
+    .input-group-text {
+      background: transparent;
+      color: #6c757d;
+      border: none;
+      padding: 0.5rem 1rem;
+    }
+
+    .form-control {
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+
+      &::placeholder {
+        color: #adb5bd;
+      }
+
+      &:focus {
+        box-shadow: none;
+        background: white;
+      }
+    }
+  }
+
+  /* Card Styling */
+  .card {
+    border-radius: 12px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .card-header {
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+
+      h5 {
+        font-size: 1.1rem;
+        color: #1a1a1a;
+      }
+    }
+
+    .card-body {
+      padding: 0;
+    }
+  }
+
+  /* Table Styling */
+  .table-responsive {
+    overflow-x: auto;
+
+    .table {
+      margin-bottom: 0;
+
+      thead {
+        background: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+
+        th {
+          border: none;
+          padding: 1rem;
+          font-size: 0.9rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: #6c757d;
+          font-weight: 600;
+        }
+      }
+
+      tbody {
+        tr {
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: #f8f9fa;
+          }
+
+          td {
+            border: none;
+            padding: 1rem;
+            vertical-align: middle;
+            color: #495057;
+          }
+        }
+      }
+    }
+  }
+
+  /* Avatar Style */
+  .avatar-sm {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  /* Badge Styling */
+  .badge {
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+
+  /* Modal Styling */
+  .modal {
+    &.show {
+      display: block;
+    }
+
+    .modal-content {
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+      .modal-header {
+        border-bottom: 1px solid #dee2e6;
+        padding: 1.5rem;
+
+        .modal-title {
+          font-size: 1.25rem;
+          color: #1a1a1a;
+        }
+      }
+
+      .modal-body {
+        padding: 2rem;
+      }
+    }
+  }
+
+  /* Form Styling */
+  .form-label {
+    color: #1a1a1a;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control,
+  .form-select {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+
+    &:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+  }
+
+  /* Buttons */
+  .btn-group-sm .btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    margin: 0 2px;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Loading Spinner */
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* Alerts */
+  .alert {
+    border-radius: 8px;
+    border: none;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+
+    &.alert-danger {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    &.alert-success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .btn-close {
+      padding: 0.5rem;
+    }
+  }
+
+  /* Empty State */
+  .bi-inbox {
+    opacity: 0.3;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .manage-users-container {
+    .page-header {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.9rem;
+      }
+    }
+
+    .table-responsive {
+      font-size: 0.9rem;
+
+      .table thead th,
+      .table td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+
+    .modal-body {
+      padding: 1.5rem !important;
+    }
+  }
+}

@@ -1,0 +1,30 @@
+.executive-dashboard {
+  .border-left-danger {
+    border-left: 4px solid #dc3545 !important;
+  }
+
+  .border-left-warning {
+    border-left: 4px solid #ffc107 !important;
+  }
+
+  .border-left-info {
+    border-left: 4px solid #17a2b8 !important;
+  }
+
+  .border-left-success {
+    border-left: 4px solid #28a745 !important;
+  }
+
+  .card {
+    transition: box-shadow 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+  }
+
+  h4 {
+    color: #2c3e50;
+  }
+}
+

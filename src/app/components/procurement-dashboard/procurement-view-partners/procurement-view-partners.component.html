@@ -1,0 +1,82 @@
+<div class="view-partners-container">
+  <div class="header mb-4">
+    <div>
+      <h2 class="mb-1">Partner Directory</h2>
+      <p class="text-muted mb-0">Supplier and logistics partner visibility for procurement.</p>
+    </div>
+  </div>
+
+  @if (!isLoading && partners.length > 0) {
+    <div class="kpi-grid mb-4">
+      <div class="kpi-card total">
+        <div class="kpi-label">Total Partners</div>
+        <div class="kpi-value">{{ partners.length }}</div>
+      </div>
+      <div class="kpi-card supplier">
+        <div class="kpi-label">Suppliers</div>
+        <div class="kpi-value">{{ getTypeCount('Supplier') }}</div>
+      </div>
+      <div class="kpi-card carrier">
+        <div class="kpi-label">Carriers</div>
+        <div class="kpi-value">{{ getTypeCount('Carrier') }}</div>
+      </div>
+      <div class="kpi-card tpl">
+        <div class="kpi-label">3PL</div>
+        <div class="kpi-value">{{ getTypeCount('3PL') }}</div>
+      </div>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="loading">
+      <p>Loading partners...</p>
+    </div>
+  }
+
+  @if (!isLoading && partners.length === 0) {
+    <div class="no-data">
+      <p>No partners available.</p>
+    </div>
+  }
+
+  @if (!isLoading && partners.length > 0) {
+    <div class="card">
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="partners-table table mb-0">
+            <thead>
+              <tr>
+                <th>Partner Name</th>
+                <th>Type</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (partner of partners; track partner.partnerId) {
+                <tr>
+                  <td class="fw-semibold">{{ partner.partnerName }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="'badge-' + getTypeClass(partner.partnerType)">
+                      {{ partner.partnerType || '-' }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="'badge-' + getStatusClass(partner.status)">
+                      {{ partner.status || 'Unknown' }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</div>

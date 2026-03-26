@@ -1,0 +1,60 @@
+@if (kpiData) {
+  <h2 class="section-title">KPI Summary</h2>
+  <div class="row g-3">
+    <!-- OTIF -->
+    <div class="col-md-6 col-lg-3">
+      <div class="kpi-card">
+        <div class="kpi-icon otif-icon">📊</div>
+        <div class="kpi-content">
+          <h6 class="kpi-label">OTIF</h6>
+          <p class="kpi-value">{{ kpiData.otif | number:'1.1-1' }}%</p>
+          <span class="kpi-status" [ngClass]="kpiData.otif >= 95 ? 'good' : 'warning'">
+            {{ kpiData.otif >= 95 ? '✓ On Target' : '⚠ Below Target' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fill Rate -->
+    <div class="col-md-6 col-lg-3">
+      <div class="kpi-card">
+        <div class="kpi-icon fill-icon">📦</div>
+        <div class="kpi-content">
+          <h6 class="kpi-label">Fill Rate</h6>
+          <p class="kpi-value">{{ kpiData.fillRate | number:'1.1-1' }}%</p>
+          <span class="kpi-status" [ngClass]="kpiData.fillRate >= 95 ? 'good' : 'warning'">
+            {{ kpiData.fillRate >= 95 ? '✓ Excellent' : '⚠ Monitor' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Turns -->
+    <div class="col-md-6 col-lg-3">
+      <div class="kpi-card">
+        <div class="kpi-icon inventory-icon">🏪</div>
+        <div class="kpi-content">
+          <h6 class="kpi-label">Inventory Turns</h6>
+          <p class="kpi-value">{{ kpiData.inventoryTurn | number:'1.1-2' }}</p>
+          <span class="kpi-status good">
+            Healthy Velocity
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delay Rate -->
+    <div class="col-md-6 col-lg-3">
+      <div class="kpi-card">
+        <div class="kpi-icon delay-icon">⏱️</div>
+        <div class="kpi-content">
+          <h6 class="kpi-label">Delay Rate</h6>
+          <p class="kpi-value">{{ kpiData.delayRate | number:'1.1-1' }}%</p>
+          <span class="kpi-status" [ngClass]="kpiData.delayRate <= 5 ? 'good' : 'warning'">
+            {{ kpiData.delayRate <= 5 ? '✓ Low' : '⚠ High' }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+}

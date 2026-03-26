@@ -1,0 +1,113 @@
+<div class="notification-center">
+  <!-- Notification Bell Icon -->
+  <div class="notification-bell" (click)="toggleModal()" title="View notifications">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+    </svg>
+    @if (unreadCount > 0) {
+      <span class="badge badge-danger">{{ unreadCount }}</span>
+    }
+  </div>
+
+  <!-- Notification Modal -->
+  @if (isOpen) {
+    <div class="notification-modal-overlay" (click)="toggleModal()">
+      <div class="notification-modal" (click)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title">Notifications</h5>
+          <button type="button" class="btn-close" (click)="toggleModal()" aria-label="Close">X</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <!-- Loading State -->
+          @if (isLoading) {
+            <div class="text-center">
+              <p class="text-muted">Loading notifications...</p>
+            </div>
+          }
+
+          <!-- Empty State -->
+          @if (!isLoading && notifications.length === 0) {
+            <div class="text-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="empty-icon">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <p class="text-muted mt-2">No notifications</p>
+            </div>
+          }
+
+          <!-- Notification List -->
+          @if (!isLoading && notifications.length > 0) {
+            <div class="notifications-list">
+              @for (notif of getSortedNotifications(); track notif.id || $index) {
+                <div 
+                  class="notification-item"
+                  [class.unread]="!notif.isRead"
+                  [class]="getDisplayClass(notif.priority)"
+                >
+                  <div class="notification-header">
+                    <div class="header-info">
+                      <span class="event-type">{{ notif.category | titlecase }}</span>
+                      <span class="status-badge" [class.unread]="!notif.isRead">
+                        {{ notif.isRead ? 'Read' : 'Unread' }}
+                      </span>
+                    </div>
+                    <button 
+                      class="btn-delete"
+                      (click)="deleteNotification(notif)"
+                      title="Delete"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                  <p class="notification-message">{{ notif.message }}</p>
+                  <div class="notification-meta">
+                    <small class="text-muted">{{ notif.createdDate | date: 'short' }}</small>
+                  </div>
+                  @if (!notif.isRead) {
+                    <div class="notification-actions">
+                      <button 
+                        class="btn btn-sm btn-outline-primary"
+                        (click)="markAsRead(notif)"
+                      >
+                        Mark as Read
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Modal Footer -->
+        @if (notifications.length > 0) {
+          <div class="modal-footer">
+            <small class="text-muted">{{ unreadCount }} unread notification(s)</small>
+            @if (unreadCount > 0) {
+              <button 
+                class="btn btn-sm btn-link"
+                (click)="markAllAsRead()"
+              >
+                Mark all as read
+              </button>
+            }
+            <button 
+              class="btn btn-sm btn-link text-danger"
+              (click)="clearAll()"
+            >
+              Clear all
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,33 @@
+<aside class="sidebar">
+  <!-- Navigation Menu -->
+  <nav class="nav-menu">
+    <ul class="nav-list">
+      @for (link of navLinks; track link.route) {
+        <li class="nav-item">
+          <a
+            [routerLink]="link.route"
+            [queryParams]="link.queryParams"
+            [class.active]="isLinkActive(link)"
+            class="nav-link"
+          >
+            @if (link.icon) {
+              <span class="nav-icon">
+                <i class="bi" [ngClass]="'bi-' + link.icon"></i>
+              </span>
+            }
+            <span class="nav-label">{{ link.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Sidebar Footer -->
+  <div class="sidebar-footer">
+    <button class="btn btn-logout" (click)="onLogout()">
+      <i class="bi bi-box-arrow-right"></i>
+      Logout
+    </button>
+  </div>
+</aside>
+

@@ -1,0 +1,32 @@
+<div class="manage-locations-container">
+  <div class="header d-flex justify-content-between align-items-center mb-2">
+    <h2>Manage Locations</h2>
+    <button (click)="openForm()" class="btn btn-success btn-sm">+ Add New Location</button>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert alert-success">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <app-manage-network-locations-list
+    [locations]="locations"
+    [isLoading]="isLoading"
+    (edit)="onEditLocation($event)"
+    (delete)="onDeleteLocation($event)"
+  ></app-manage-network-locations-list>
+
+  <app-manage-network-locations-form
+    [isVisible]="isFormVisible"
+    [editingLocation]="editingLocation"
+    (save)="onSaveLocation($event)"
+    (close)="closeForm()"
+  ></app-manage-network-locations-form>
+</div>

@@ -1,0 +1,77 @@
+.planner-dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f5f7fa;
+
+  // Header
+  app-planner-header {
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+  }
+
+  // Dashboard Body
+  .dashboard-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+
+    // Sidebar
+    app-planner-sidebar {
+      flex-shrink: 0;
+    }
+
+    // Main Content
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background-color: #f5f7fa;
+
+      app-planner-dashboard-content {
+        display: block;
+      }
+    }
+  }
+}
+
+/* Custom Scrollbar */
+.main-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: #e9ecef;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: #adb5bd;
+  border-radius: 4px;
+
+  &:hover {
+    background: #868e96;
+  }
+}
+
+@media (max-width: 768px) {
+  .planner-dashboard-layout {
+    .dashboard-body {
+      flex-direction: column;
+
+      app-planner-sidebar {
+        position: fixed;
+        left: -260px;
+        top: 56px;
+        height: calc(100vh - 56px);
+        z-index: 999;
+      }
+
+      .main-content {
+        flex: 1;
+        width: 100%;
+      }
+    }
+  }
+}
+

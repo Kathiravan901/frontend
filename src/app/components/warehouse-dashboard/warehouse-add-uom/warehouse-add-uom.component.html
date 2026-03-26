@@ -1,0 +1,126 @@
+<div class="manage-uoms">
+  <!-- Header Section -->
+  <div class="header-section">
+    <h2>Manage UOM</h2>
+    @if (!isLoading && uoms.length > 0) {
+      <button 
+        class="btn-create-top" 
+        (click)="openAddForm()"
+        type="button">
+        <i class="bi bi-plus-circle"></i> Add UOM
+      </button>
+    }
+
+  <!-- Search Filter -->
+  <div class="filters">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="search">Search:</label>
+        <input 
+          type="text" 
+          id="search"
+          placeholder="Search by UOM code..."
+          [(ngModel)]="searchTerm"
+          class="search-input">
+      </div>
+      <button type="button" class="filter-btn" (click)="searchTerm = ''">Clear</button>
+    </div>
+  </div>
+
+  <!-- UOMs Table or Empty State -->
+  @if (!isLoading && getFilteredUoms().length > 0) {
+    <div class="uoms-table">
+      <table>
+        <thead>
+          <tr>
+            <th>UOM Code</th>
+            <th class="actions-header">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (uom of getFilteredUoms(); track uom.uomId) {
+            <tr>
+              <td><strong>{{ uom.uomCode }}</strong></td>
+              <td class="actions-cell">
+                <button 
+                  class="action-btn edit-btn"
+                  (click)="editUom(uom)"
+                  title="Edit">
+                  <i class="bi bi-pencil"></i> Edit
+                </button>
+                <button 
+                  class="action-btn delete-btn"
+                  (click)="deleteUom(uom.uomId)"
+                  [disabled]="isDeleting"
+                  title="Delete">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="loading">Loading UOMs...</div>
+  }
+
+  @if (!isLoading && getFilteredUoms().length === 0) {
+    <div class="empty-state">
+      <p>No UOMs found. <button type="button" (click)="openAddForm()" class="link-btn">Add New UOM</button></p>
+    </div>
+  }
+
+  <!-- Add/Edit UOM Modal -->
+  @if (showAddForm) {
+    <div class="modal-overlay" (click)="closeAddForm()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>{{ editingUomId ? 'Edit UOM' : 'Add UOM' }}</h3>
+        <form [formGroup]="uomForm" (ngSubmit)="onSubmit()">
+          <!-- UOM Code -->
+          <div class="form-group">
+            <label for="uomCode">UOM Code <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="uomCode" 
+              formControlName="uomCode" 
+              placeholder="e.g., KG, LB, L"
+              required>
+            @if (uomForm.get('uomCode')?.invalid && uomForm.get('uomCode')?.touched) {
+              <small class="error-text">
+                UOM Code is required and must be less than 50 characters.
+              </small>
+            }
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button 
+              type="submit" 
+              [disabled]="uomForm.invalid || isSubmitting">
+              {{ isSubmitting ? (editingUomId ? 'Updating...' : 'Adding...') : (editingUomId ? 'Update UOM' : 'Add UOM') }}
+            </button>
+            <button 
+              type="button" 
+              (click)="closeAddForm()">
+              Cancel
+            </button>
+          </div>
+        </form>
+
+        <!-- Success Alert -->
+        @if (successMessage) {
+          <div class="success">{{ successMessage }}</div>
+        }
+
+        <!-- Error Alert -->
+        @if (errorMessage) {
+          <div class="error">{{ errorMessage }}</div>
+        }
+      </div>
+    </div>
+  }
+
+</div>

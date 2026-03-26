@@ -1,0 +1,223 @@
+<div class="manage-shipments">
+  <div class="header-section mb-4">
+    <div>
+      <h2 class="h4 fw-bold mb-1">Shipment Management</h2>
+      <p class="text-muted mb-0">Track delivery progress and update shipment lifecycle with confidence.</p>
+    </div>
+    <span class="header-pill">
+      <i class="bi bi-box-seam me-1"></i> Total: {{ allShipments.length }}
+    </span>
+  </div>
+
+  <div class="kpi-grid mb-4">
+    @if (allShipments.length > 0) {
+      <div class="kpi-card total">
+        <div class="kpi-label">Total Shipments</div>
+        <div class="kpi-value">{{ allShipments.length }}</div>
+      </div>
+      <div class="kpi-card transit">
+        <div class="kpi-label">In Transit</div>
+        <div class="kpi-value">{{ getStatusCount('InTransit') }}</div>
+      </div>
+      <div class="kpi-card delivered">
+        <div class="kpi-label">Delivered</div>
+        <div class="kpi-value">{{ getStatusCount('Delivered') }}</div>
+      </div>
+      <div class="kpi-card delayed">
+        <div class="kpi-label">Pending / Other</div>
+        <div class="kpi-value">{{ allShipments.length - getStatusCount('InTransit') - getStatusCount('Delivered') }}</div>
+      </div>
+    }
+  </div>
+
+  @if (successMessage) {
+    <div class="alert alert-success py-2" role="alert">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger py-2" role="alert">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Filters -->
+  <div class="card filter-card mb-4">
+    <div class="card-body">
+      <form [formGroup]="filters" (ngSubmit)="onFilter()">
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label for="status" class="form-label">Status</label>
+            <select id="status" class="form-select" formControlName="status">
+              <option value="">All Status</option>
+              @for (status of statusOptions; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="partner" class="form-label">Carrier Partner</label>
+            <select id="partner" class="form-select" formControlName="carrierPartnerId">
+              <option value="">All Partners</option>
+              @for (partner of partners; track partner.partnerId) {
+                <option [value]="partner.partnerId">{{ partner.partnerName }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label for="fromDate" class="form-label">From Date</label>
+            <input type="date" id="fromDate" class="form-control" formControlName="fromDate">
+          </div>
+          <div class="col-md-2">
+            <label for="toDate" class="form-label">To Date</label>
+            <input type="date" id="toDate" class="form-control" formControlName="toDate">
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100 btn-filter">Apply</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shipments Table -->
+  @if (!isLoading) {
+    <div class="card table-card">
+      <div class="card-body">
+        <div class="table-responsive list-scroll">
+          <table class="table table-hover mb-0">
+            <thead>
+              <tr class="table-light">
+                <th>Shipment ID</th>
+                <th>Order ID</th>
+                <th>Carrier Partner</th>
+                <th>Dispatch Date</th>
+                <th>Estimated Arrival</th>
+                <th>Status</th>
+                <th class="text-center">View</th>
+                <th class="text-center">Status Update</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (shipment of shipments; track shipment.shipmentId) {
+                <tr>
+                  <td>{{ shipment.shipmentId }}</td>
+                  <td>{{ getOrderId(shipment.orderId) }}</td>
+                  <td>{{ getPartnerName(shipment.carrierPartnerId) }}</td>
+                  <td>{{ shipment.dispatchDateUtc | date:'shortDate' }}</td>
+                  <td>{{ shipment.estimatedArrivalUtc | date:'shortDate' }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusClass(shipment.status)">{{ shipment.status }}</span>
+                  </td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary" (click)="viewShipmentDetails(shipment)">
+                      <i class="bi bi-eye"></i> View
+                    </button>
+                  </td>
+                  <td class="text-center">
+                    @if (canMarkDelivered(shipment.status)) {
+                      <button
+                        class="btn btn-sm btn-success"
+                        [disabled]="updatingShipmentId === shipment.shipmentId"
+                        (click)="markAsDelivered(shipment)">
+                        @if (updatingShipmentId !== shipment.shipmentId) {
+                          <span>
+                            <i class="bi bi-check2-circle"></i> Deliver
+                          </span>
+                        }
+                        @if (updatingShipmentId === shipment.shipmentId) {
+                          <span>
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            Updating...
+                          </span>
+                        }
+                      </button>
+                    }
+                    @if (!canMarkDelivered(shipment.status)) {
+                      <span class="text-muted small">No action</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      @if (shipments.length === 0) {
+        <div class="text-center py-4 text-muted">
+          <i class="bi bi-box-seam" style="font-size: 2rem;"></i>
+          <p class="mt-2">No shipments found</p>
+        </div>
+      }
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  }
+
+  <!-- Shipment Details Modal -->
+  @if (showShipmentDetails && selectedShipment) {
+    <div class="modal d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+          <h5 class="modal-title">Shipment Details - #{{ selectedShipment.shipmentId }}</h5>
+          <button type="button" class="btn-close" (click)="closeShipmentDetails()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <p><strong>Shipment ID:</strong> {{ selectedShipment.shipmentId }}</p>
+              <p><strong>Shipment Ref:</strong> {{ selectedShipment.shipmentRefNo || 'N/A' }}</p>
+              <p><strong>Status:</strong> <span class="badge" [ngClass]="getStatusClass(selectedShipment.status)">{{ selectedShipment.status }}</span></p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Order ID:</strong> {{ getOrderId(selectedShipment.orderId) }}</p>
+              <p><strong>Carrier:</strong> {{ getPartnerName(selectedShipment.carrierPartnerId) }}</p>
+            </div>
+          </div>
+
+          <h6>Dates</h6>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <p><strong>Dispatch Date:</strong> {{ selectedShipment.dispatchDateUtc | date:'medium' }}</p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Estimated Arrival:</strong> {{ selectedShipment.estimatedArrivalUtc | date:'medium' }}</p>
+            </div>
+          </div>
+
+          @if (selectedShipment.actualArrivalUtc) {
+            <p><strong>Actual Arrival:</strong> {{ selectedShipment.actualArrivalUtc | date:'medium' }}</p>
+          }
+        </div>
+        <div class="modal-footer">
+          @if (canMarkDelivered(selectedShipment.status)) {
+            <button
+              type="button"
+              class="btn btn-success"
+              [disabled]="updatingShipmentId === selectedShipment.shipmentId"
+              (click)="markAsDelivered(selectedShipment)">
+              @if (updatingShipmentId !== selectedShipment.shipmentId) {
+                <span>Mark Delivered</span>
+              }
+              @if (updatingShipmentId === selectedShipment.shipmentId) {
+                <span>Updating...</span>
+              }
+            </button>
+          }
+          <button type="button" class="btn btn-secondary" (click)="closeShipmentDetails()">Close</button>
+        </div>
+      </div>
+    </div>
+    </div>
+  }
+</div>
+

@@ -1,0 +1,110 @@
+@if (riskData) {
+  <h2 class="section-title">Risk Analysis</h2>
+  <div class="row g-3">
+    <!-- Shipment Delays -->
+    <div class="col-md-6 col-lg-4">
+      <div class="risk-card" [ngClass]="getRiskLevel(riskData.shipmentDelayRiskPercent)">
+        <div class="risk-header">
+          <span class="risk-icon">{{ getRiskIcon(getRiskLevel(riskData.shipmentDelayRiskPercent)) }}</span>
+          <h5 class="risk-title">Shipment Delays</h5>
+        </div>
+        <div class="risk-content">
+          <p class="risk-percentage">{{ riskData.shipmentDelayRiskPercent | number:'1.1-1' }}%</p>
+          <p class="risk-detail">{{ riskData.shipmentsDelayed }} of {{ riskData.shipmentsTotal }} delayed</p>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="riskData.shipmentDelayRiskPercent"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Shortages -->
+    <div class="col-md-6 col-lg-4">
+      <div class="risk-card" [ngClass]="getRiskLevel(riskData.inventoryShortagePositions / riskData.inventoryPositionsTotal * 100)">
+        <div class="risk-header">
+          <span class="risk-icon">{{ getRiskIcon(getRiskLevel(riskData.inventoryShortagePositions / riskData.inventoryPositionsTotal * 100)) }}</span>
+          <h5 class="risk-title">Inventory Shortages</h5>
+        </div>
+        <div class="risk-content">
+          <p class="risk-percentage">{{ (riskData.inventoryShortagePositions / riskData.inventoryPositionsTotal * 100) | number:'1.1-1' }}%</p>
+          <p class="risk-detail">{{ riskData.inventoryShortagePositions }} of {{ riskData.inventoryPositionsTotal }} positions</p>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="riskData.inventoryShortagePositions / riskData.inventoryPositionsTotal * 100"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supplier Risk -->
+    <div class="col-md-6 col-lg-4">
+      <div class="risk-card" [ngClass]="getRiskLevel(riskData.suppliersAtRisk)">
+        <div class="risk-header">
+          <span class="risk-icon">🏭</span>
+          <h5 class="risk-title">Supplier Risk</h5>
+        </div>
+        <div class="risk-content">
+          <p class="risk-percentage">{{ riskData.suppliersAtRisk }}</p>
+          <p class="risk-detail">Suppliers at risk</p>
+          <div class="info-badge">
+            Requires monitoring
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overdue Orders -->
+    <div class="col-md-6 col-lg-4">
+      <div class="risk-card" [ngClass]="getRiskLevel(riskData.openPurchaseOrdersOverdue)">
+        <div class="risk-header">
+          <span class="risk-icon">📋</span>
+          <h5 class="risk-title">Overdue Orders</h5>
+        </div>
+        <div class="risk-content">
+          <p class="risk-percentage">{{ riskData.openPurchaseOrdersOverdue }}</p>
+          <p class="risk-detail">Open purchase orders overdue</p>
+          <div class="info-badge">
+            Immediate action needed
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Capacity Issues -->
+    <div class="col-md-6 col-lg-4">
+      <div class="risk-card" [ngClass]="getRiskLevel(riskData.capacityRiskOpenEvents)">
+        <div class="risk-header">
+          <span class="risk-icon">⚙️</span>
+          <h5 class="risk-title">Capacity Issues</h5>
+        </div>
+        <div class="risk-content">
+          <p class="risk-percentage">{{ riskData.capacityRiskOpenEvents }}</p>
+          <p class="risk-detail">Open capacity risk events</p>
+          <div class="info-badge">
+            Escalation required
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk Summary -->
+    <div class="col-12">
+      <div class="risk-summary">
+        <h5 class="summary-title">Risk Summary</h5>
+        <div class="summary-items">
+          <div class="summary-item">
+            <span class="item-label">Critical Issues:</span>
+            <span class="item-value">{{ (riskData.openPurchaseOrdersOverdue + riskData.capacityRiskOpenEvents) }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="item-label">High Risk Metrics:</span>
+            <span class="item-value">{{ (riskData.shipmentDelayRiskPercent > 25 ? 1 : 0) + (riskData.inventoryShortagePositions / riskData.inventoryPositionsTotal * 100 > 25 ? 1 : 0) }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="item-label">Suppliers at Risk:</span>
+            <span class="item-value">{{ riskData.suppliersAtRisk }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,121 @@
+<div class="audit-logs-container">
+  <!-- Page Header -->
+  <div class="page-header mb-2">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1 class="h5 fw-bold text-dark mb-1">
+          <i class="bi bi-clock-history text-primary me-2"></i>Audit Logs
+        </h1>
+        <p class="text-muted small mb-0">Track and monitor all system activities and user actions</p>
+      </div>
+      <button class="btn btn-outline-primary btn-sm" (click)="exportLogs()" title="Export current logs to CSV">
+        <i class="bi bi-download me-1"></i>Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filter-section mb-2">
+    <div class="row g-2">
+      <div class="col-md-4">
+        <label class="form-label small fw-semibold text-dark mb-1">Filter by Action</label>
+        <div class="input-group input-group-sm">
+          <span class="input-group-text border-0 bg-light">
+            <i class="bi bi-funnel text-primary"></i>
+          </span>
+          <select
+            class="form-select form-select-sm border-0 bg-light"
+            [(ngModel)]="filterAction"
+            (change)="onFilterActionChange()"
+          >
+            <option value="">All Actions</option>
+            @for (action of uniqueActions; track action) {
+              <option [value]="action">{{ action }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  @if (errorMessage) {
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="bi bi-exclamation-circle me-2"></i>
+      {{ errorMessage }}
+      <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+    </div>
+  }
+
+  <!-- Audit Logs Table Card -->
+  <div class="card border-0 shadow-sm rounded-3">
+    <div class="card-header bg-white border-bottom-0 py-2">
+      <div class="d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold small">
+          <i class="bi bi-list-ul text-primary me-2"></i>Activity Log
+        </h6>
+        @if (!isLoading && filteredLogs.length > 0) {
+          <small class="text-muted">
+            Showing {{ filteredLogs.length }} of {{ logs.length }} entries
+          </small>
+        }
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      @if (isLoading) {
+        <div class="text-center py-3">
+          <div class="spinner-border text-primary mb-2" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="text-muted small">Loading audit logs...</p>
+        </div>
+      }
+
+      @if (!isLoading && filteredLogs.length > 0) {
+        <div class="table-responsive">
+          <table class="table table-hover table-sm align-middle mb-0">
+            <thead style="position:sticky; top:0; z-index:1;">
+              <tr class="border-bottom">
+                <th class="fw-bold text-muted small ps-3">Timestamp</th>
+                <th class="fw-bold text-muted small">User Name</th>
+                <th class="fw-bold text-muted small">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (log of filteredLogs; track log.auditId) {
+                <tr class="border-bottom-light">
+                  <td class="ps-3 text-muted small">
+                    <i class="bi bi-calendar-event me-1 text-primary"></i>
+                    {{ formatDate(log.timestamp) }}
+                  </td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="avatar-sm bg-primary bg-opacity-10 rounded-circle me-2 d-flex align-items-center justify-content-center">
+                        <i class="bi bi-person-fill text-primary"></i>
+                      </div>
+                      <strong class="text-dark small d-block">{{ log.displayName }}</strong>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge rounded-pill" [ngClass]="getActionBadgeClass(log.action)">
+                      {{ log.action }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+
+      @if (!isLoading && filteredLogs.length === 0) {
+        <div class="text-center py-5">
+          <i class="bi bi-inbox text-muted mb-3" style="font-size: 3.5rem; opacity: 0.4;"></i>
+          <p class="text-muted mt-3 mb-0">No audit logs found</p>
+          <small class="text-muted">Try adjusting your filter criteria</small>
+        </div>
+      }
+    </div>
+  </div>
+</div>

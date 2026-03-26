@@ -1,0 +1,64 @@
+.manage-network {
+  padding: 8px;
+
+  .page-title {
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .nav-tabs {
+    border-bottom: 2px solid #e9ecef;
+    gap: 4px;
+
+    .nav-link {
+      background: none;
+      border: none;
+      color: #666;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 6px 6px 0 0;
+      transition: all 0.3s ease;
+
+      i {
+        margin-right: 4px;
+      }
+
+      &:hover {
+        background-color: #f0f0f0;
+        color: #333;
+      }
+
+      &.active {
+        color: #007bff;
+        border-bottom: 3px solid #007bff;
+        background-color: #f8f9ff;
+      }
+    }
+  }
+
+  .tab-content {
+    animation: fadeIn 0.3s ease;
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.3s ease;
+
+      &.active {
+        display: block;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

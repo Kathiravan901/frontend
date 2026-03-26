@@ -1,0 +1,66 @@
+@if (isVisible) {
+  <div class="form-container">
+    <div class="form-header">
+      <h3>{{ editingLocation ? 'Edit Location' : 'Add New Location' }}</h3>
+      <button (click)="onClose()" class="btn-close">&times;</button>
+    </div>
+
+    <form [formGroup]="locationForm" (ngSubmit)="onSave()" class="location-form">
+      <div class="form-group">
+        <label for="name">Name *</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          class="form-control"
+          placeholder="Enter location name"
+          required
+        />
+        @if (locationForm.get('name')?.invalid && locationForm.get('name')?.touched) {
+          <div class="error-message">
+            Name is required
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="type">Type *</label>
+        <select id="type" formControlName="type" class="form-control" required>
+          <option value="">Select Type</option>
+          @for (type of locationTypes; track type) {
+            <option [value]="type">{{ type }}</option>
+          }
+        </select>
+        @if (locationForm.get('type')?.invalid && locationForm.get('type')?.touched) {
+          <div class="error-message">
+            Type is required
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="region">Region *</label>
+        <input
+          id="region"
+          type="text"
+          formControlName="region"
+          class="form-control"
+          placeholder="Enter region"
+          required
+        />
+        @if (locationForm.get('region')?.invalid && locationForm.get('region')?.touched) {
+          <div class="error-message">
+            Region is required
+          </div>
+        }
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="locationForm.invalid" class="btn btn-primary">
+          {{ editingLocation ? 'Update' : 'Add' }} Location
+        </button>
+        <button type="button" (click)="onClose()" class="btn btn-secondary">Cancel</button>
+      </div>
+    </form>
+  </div>
+}

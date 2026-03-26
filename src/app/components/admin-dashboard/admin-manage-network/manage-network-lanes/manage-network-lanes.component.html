@@ -1,0 +1,34 @@
+<div class="manage-lanes-container">
+  <div class="header d-flex justify-content-between align-items-center mb-2">
+    <h2>Manage Lanes</h2>
+    <button (click)="openForm()" class="btn btn-success btn-sm">+ Add New Lane</button>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert alert-success">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <app-manage-network-lanes-list
+    [lanes]="lanes"
+    [locations]="locations"
+    [isLoading]="isLoading"
+    (edit)="onEditLane($event)"
+    (delete)="onDeleteLane($event)"
+  ></app-manage-network-lanes-list>
+
+  <app-manage-network-lanes-form
+    [isVisible]="isFormVisible"
+    [editingLane]="editingLane"
+    [locations]="locations"
+    (save)="onSaveLane($event)"
+    (close)="closeForm()"
+  ></app-manage-network-lanes-form>
+</div>

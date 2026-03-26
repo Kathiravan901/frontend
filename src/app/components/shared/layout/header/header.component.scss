@@ -1,0 +1,212 @@
+.header {
+  background: linear-gradient(135deg, #1a2332 0%, #252d3d 100%);
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 2px solid #0066cc;
+
+  .header-content {
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+
+    // Logo Section
+    .header-left {
+      flex: 0 0 auto;
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        text-decoration: none;
+        color: white;
+        font-weight: 700;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+          color: #4a90e2;
+          text-decoration: none;
+        }
+
+        i {
+          font-size: 2rem;
+          color: #0066cc;
+          transition: all 0.3s ease;
+        }
+
+        .logo-text {
+          letter-spacing: 0.5px;
+        }
+
+        &:hover i {
+          color: #0080ff;
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    // Spacer
+    .header-spacer {
+      flex: 1;
+    }
+
+    // Right Section
+    .header-right {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+
+      .user-info-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding-right: 0.75rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+
+        .user-avatar-icon {
+          font-size: 2rem;
+          color: #0066cc;
+          flex-shrink: 0;
+
+          i {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+
+        .user-details {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+
+          .user-name-header {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin: 0;
+            color: white;
+          }
+
+          .user-role-header {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin: 0.2rem 0 0 0;
+            text-transform: capitalize;
+          }
+        }
+      }
+
+      .action-link,
+      .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: white;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(0, 102, 204, 0.3);
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+
+        i {
+          font-size: 1rem;
+          color: #0066cc;
+        }
+
+        &:hover {
+          background: rgba(0, 102, 204, 0.15);
+          border-color: rgba(0, 102, 204, 0.6);
+          color: #ffffff;
+
+          i {
+            color: #0080ff;
+          }
+        }
+
+        &:active {
+          background: rgba(74, 144, 226, 0.3);
+          transform: translateY(1px);
+        }
+      }
+
+      .action-btn {
+        border: none;
+        cursor: pointer;
+
+        &.logout-btn {
+          i {
+            color: #dc3545;
+          }
+
+          &:hover {
+            background: rgba(220, 53, 69, 0.12);
+            border-color: rgba(220, 53, 69, 0.4);
+            color: #ffffff;
+
+            i {
+              color: #ff6366;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0.75rem 1rem;
+
+    .header-content {
+      gap: 1rem;
+
+      .header-left .logo {
+        font-size: 1.1rem;
+
+        i {
+          font-size: 1.5rem;
+        }
+
+        .logo-text {
+          display: none;
+        }
+      }
+
+      .header-spacer {
+        flex: 0;
+      }
+
+      .header-right {
+        gap: 0.75rem;
+
+        .action-link,
+        .action-btn {
+          padding: 0.5rem 0.75rem;
+          font-size: 0.8rem;
+
+          span {
+            display: none;
+          }
+
+          i {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}
+

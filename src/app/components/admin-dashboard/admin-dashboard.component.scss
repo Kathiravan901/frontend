@@ -1,0 +1,232 @@
+.admin-dashboard {
+  .page-header {
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 2rem;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #6c757d;
+      margin-bottom: 0;
+    }
+  }
+
+  /* Statistics Cards */
+  .stats-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .card-body {
+      padding: 0.75rem;
+    }
+
+    .stats-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+
+      &.bg-primary-light {
+        background-color: rgba(0, 123, 255, 0.1);
+      }
+
+      &.bg-success-light {
+        background-color: rgba(40, 167, 69, 0.1);
+      }
+
+      &.bg-warning-light {
+        background-color: rgba(255, 193, 7, 0.1);
+      }
+
+      &.bg-info-light {
+        background-color: rgba(17, 182, 214, 0.1);
+      }
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      color: #1a1a1a;
+      margin: 0.25rem 0 0;
+    }
+
+    small {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+  }
+
+  /* Card Styling */
+  .card {
+    border-radius: 12px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .card-header {
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+
+      h5 {
+        font-size: 1.1rem;
+        color: #1a1a1a;
+      }
+    }
+
+    .card-body {
+      padding: 0;
+    }
+  }
+
+  /* Search Input */
+  .input-group {
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8f9fa;
+
+    .input-group-text {
+      background: transparent;
+      color: #6c757d;
+      border: none;
+      padding: 0.5rem 1rem;
+    }
+
+    .form-control {
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.95rem;
+
+      &::placeholder {
+        color: #adb5bd;
+      }
+
+      &:focus {
+        box-shadow: none;
+        background: white;
+      }
+    }
+  }
+
+  /* Table Styling */
+  .table-responsive {
+    overflow-x: auto;
+
+    .table {
+      margin-bottom: 0;
+
+      thead {
+        background: #f8f9fa;
+        border-top: 1px solid #dee2e6;
+
+        th {
+          border: none;
+          padding: 1rem;
+          font-size: 0.9rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: #6c757d;
+          font-weight: 600;
+        }
+      }
+
+      tbody {
+        tr {
+          transition: background-color 0.2s ease;
+
+          &:hover {
+            background-color: #f8f9fa;
+          }
+
+          td {
+            border: none;
+            padding: 1rem;
+            vertical-align: middle;
+            color: #495057;
+          }
+        }
+      }
+    }
+  }
+
+  /* Avatar Style */
+  .avatar-sm {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  /* Badge Styling */
+  .badge {
+    padding: 0.5rem 0.75rem;
+    font-weight: 500;
+    border-radius: 6px;
+    font-size: 0.85rem;
+  }
+
+  /* Button Group */
+  .btn-group-sm .btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    margin: 0 2px;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Loading Spinner */
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  /* Empty State */
+  .bi-inbox {
+    opacity: 0.3;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-dashboard {
+    .page-header {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .btn {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.9rem;
+      }
+    }
+
+    .stats-card h3 {
+      font-size: 1.5rem;
+    }
+
+    .table-responsive {
+      font-size: 0.9rem;
+
+      .table thead th,
+      .table td {
+        padding: 0.75rem 0.5rem;
+      }
+    }
+  }
+}

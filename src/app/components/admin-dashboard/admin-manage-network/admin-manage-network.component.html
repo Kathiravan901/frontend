@@ -1,0 +1,58 @@
+<div class="manage-network">
+  <h2 class="page-title">Manage Network</h2>
+  
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs mb-4" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button 
+        class="nav-link" 
+        [class.active]="activeTab === 'lanes'"
+        (click)="switchTab('lanes')"
+        type="button"
+        role="tab">
+        <i class="bi bi-diagram-3"></i> Manage Lanes
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button 
+        class="nav-link" 
+        [class.active]="activeTab === 'locations'"
+        (click)="switchTab('locations')"
+        type="button"
+        role="tab">
+        <i class="bi bi-geo-alt"></i> Manage Locations
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button 
+        class="nav-link" 
+        [class.active]="activeTab === 'partners'"
+        (click)="switchTab('partners')"
+        type="button"
+        role="tab">
+        <i class="bi bi-people"></i> Manage Partners
+      </button>
+    </li>
+  </ul>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    @if (activeTab === 'lanes') {
+      <div class="tab-pane active">
+        <app-manage-network-lanes></app-manage-network-lanes>
+      </div>
+    }
+
+    @if (activeTab === 'locations') {
+      <div class="tab-pane active">
+        <app-manage-network-locations></app-manage-network-locations>
+      </div>
+    }
+
+    @if (activeTab === 'partners') {
+      <div class="tab-pane active">
+        <app-manage-network-partners></app-manage-network-partners>
+      </div>
+    }
+  </div>
+</div>

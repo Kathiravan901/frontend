@@ -1,0 +1,160 @@
+<div class="manage-resolution-actions">
+  <!-- Header Section -->
+  <div class="page-header">
+    <h2>Resolution Actions</h2>
+    <button class="btn-create-top" (click)="openCreate()" type="button">
+      <i class="bi bi-plus-circle"></i> Create New Action
+    </button>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filters">
+    <form [formGroup]="filterForm" (ngSubmit)="applyFilter()">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>Status</label>
+          <select formControlName="status">
+            <option value="">All Statuses</option>
+            @for (status of actionStatuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+        <button class="filter-btn" type="submit"><i class="bi bi-funnel"></i> Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Messages -->
+  @if (errorMessage) {
+    <div class="alert-msg error">{{ errorMessage }} <span (click)="errorMessage = ''">&times;</span></div>
+  }
+  @if (successMessage) {
+    <div class="alert-msg success">{{ successMessage }} <span (click)="successMessage = ''">&times;</span></div>
+  }
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="loading">Loading resolution actions...</div>
+  }
+
+  <!-- Empty State -->
+  @if (!isLoading && actions.length === 0) {
+    <div class="empty-state">
+      <p>No resolution actions found. <button type="button" class="link-btn" (click)="openCreate()">Create New Action</button></p>
+    </div>
+  }
+
+  <!-- Resolution Actions Table -->
+  @if (!isLoading && actions.length > 0) {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Action ID</th>
+            <th>Exception</th>
+            <th>Owner</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th class="actions-col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (action of actions; track action.actionId) {
+            <tr>
+          <td><strong>#{{ action.actionId }}</strong></td>
+          <td>#{{ action.exceptionId }}</td>
+          <td>{{ action.ownerUserName || ('User #' + action.ownerUserId) }}</td>
+          <td class="description-cell">{{ action.actionDescription }}</td>
+          <td>
+            <span class="badge" [ngClass]="{
+              'badge-danger': action.status === 'Open',
+              'badge-warning': action.status === 'InProgress',
+              'badge-success': action.status === 'Closed'
+            }">{{ action.status === 'InProgress' ? 'In Progress' : action.status }}</span>
+          </td>
+          <td>{{ action.dueDate ? (action.dueDate | date:'MMM dd, yyyy') : '-' }}</td>
+          <td class="actions-cell">
+            <button class="action-btn edit-btn" (click)="openEdit(action)">
+              <i class="bi bi-pencil"></i> Edit
+            </button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    </div>
+  }
+
+  <!-- Create/Edit Modal -->
+  @if (showForm) {
+    <div class="modal-overlay" (click)="closeForm()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <h3>{{ isEditing ? 'Edit Resolution Action' : 'Create Resolution Action' }}</h3>
+        <form [formGroup]="editForm" (ngSubmit)="save()">
+          <div class="form-group">
+            <label>Exception <span class="required">*</span></label>
+            <select formControlName="exceptionId" required (change)="updateFilteredUsers(editForm.get('exceptionId')?.value)">
+              <option [ngValue]="null">Select exception</option>
+              @for (ex of exceptions; track ex.exceptionId) {
+                <option [ngValue]="ex.exceptionId">
+                  #{{ ex.exceptionId }} - {{ ex.type }} ({{ ex.severity }})
+                </option>
+              }
+            </select>
+            @if (exceptions.length === 0) {
+              <small>No exceptions available. Create one first in the Exception Events panel.</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label>Owner User <span class="required">*</span></label>
+            <select formControlName="ownerUserId" required>
+              <option [ngValue]="null">Select user</option>
+              @for (user of filteredUsers; track user.userId) {
+                <option [ngValue]="user.userId">
+                  {{ user.displayName }} ({{ user.roleName }})
+                </option>
+              }
+            </select>
+            @if (filteredUsers.length === 0 && editForm.get('exceptionId')?.value && allUsers.length > 0) {
+              <small>
+              No {{ getExpectedRoleForException(editForm.get('exceptionId')?.value) }} users available.
+              </small>
+            }
+          </div>
+
+        <div class="form-group">
+          <label>Action Description <span class="required">*</span></label>
+          <textarea formControlName="actionDescription" rows="3" required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Due Date</label>
+            <input type="date" formControlName="dueDate" />
+          </div>
+          <div class="form-group">
+            <label>Status <span class="required">*</span></label>
+            <select formControlName="status" required>
+              <option value="">Select Status</option>
+              @for (status of actionStatuses; track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        @if (errorMessage) {
+          <div class="alert-msg error">{{ errorMessage }}</div>
+        }
+        <div class="modal-actions">
+          <button type="submit" [disabled]="editForm.invalid">{{ isEditing ? 'Update Action' : 'Create Action' }}</button>
+          <button type="button" (click)="closeForm()">Cancel</button>
+        </div>
+      </form>
+    </div>
+    </div>
+  }
+</div>

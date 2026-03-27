@@ -135,7 +135,12 @@
                       </button>
                     }
                     @if (!canMarkDelivered(shipment.status)) {
-                      <span class="text-muted small">No action</span>
+                      <button
+                        class="btn btn-sm btn-info text-white"
+                        [disabled]="updatingShipmentId === shipment.shipmentId"
+                        (click)="openStatusUpdateModal(shipment)">
+                        <i class="bi bi-pencil"></i> Edit Status
+                      </button>
                     }
                   </td>
                 </tr>
@@ -217,6 +222,58 @@
         </div>
       </div>
     </div>
+    </div>
+  }
+
+  <!-- Status Update Modal -->
+  @if (showStatusUpdateModal && shipmentForStatusUpdate) {
+    <div class="modal d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Shipment Status - #{{ shipmentForStatusUpdate.shipmentId }}</h5>
+            <button type="button" class="btn-close" (click)="closeStatusUpdateModal()"></button>
+          </div>
+          <form [formGroup]="updateStatusForm">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="statusSelect" class="form-label">Status</label>
+                <select id="statusSelect" class="form-select" formControlName="status">
+                  <option value="">Select Status</option>
+                  @for (status of statusUpdateOptions; track status) {
+                    <option [value]="status">{{ status }}</option>
+                  }
+                </select>
+                @if (updateStatusForm.get('status')?.invalid && updateStatusForm.get('status')?.touched) {
+                  <small class="text-danger">Status is required</small>
+                }
+              </div>
+              <p class="text-muted small">
+                <i class="bi bi-info-circle"></i>
+                Current Status: <strong>{{ shipmentForStatusUpdate.status }}</strong>
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                [disabled]="!updateStatusForm.valid || updatingShipmentId === shipmentForStatusUpdate.shipmentId"
+                (click)="updateShipmentStatus()">
+                @if (updatingShipmentId !== shipmentForStatusUpdate.shipmentId) {
+                  <span><i class="bi bi-check2"></i> Update Status</span>
+                }
+                @if (updatingShipmentId === shipmentForStatusUpdate.shipmentId) {
+                  <span>
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                    Updating...
+                  </span>
+                }
+              </button>
+              <button type="button" class="btn btn-secondary" (click)="closeStatusUpdateModal()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   }
 </div>

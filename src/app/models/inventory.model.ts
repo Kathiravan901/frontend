@@ -15,4 +15,6 @@ export interface InventoryPositionResponseDto {
   itemId: number;
   quantityOnHand: number;
   safetyStock: number;
+  itemThreshold: number;
+  reorderLevel: number;
 }

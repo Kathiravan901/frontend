@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UomCreateDto, UomResponseDto } from '../../../models';
 import { UomService } from '../../../services/uom.service';
+import { ToastService } from '../../../services/toast.service';
 
 
 @Component({
@@ -24,7 +25,7 @@ export class WarehouseAddUomComponent implements OnInit {
   searchTerm = '';
   uoms: UomResponseDto[] = [];
 
-  constructor(private fb: FormBuilder, private uomService: UomService) {
+  constructor(private fb: FormBuilder, private uomService: UomService, private toastService: ToastService) {
     this.uomForm = this.fb.group({
       uomCode: ['', [Validators.required, Validators.maxLength(50)]]
     });
@@ -87,7 +88,7 @@ export class WarehouseAddUomComponent implements OnInit {
         const updateDto = { uomId: this.editingUomId, ...dto } as any;
         this.uomService.updateUom(updateDto).subscribe({
           next: () => {
-            this.successMessage = 'UOM updated successfully!';
+            this.toastService.success('UOM updated successfully!');
             this.uomForm.reset();
             this.editingUomId = null;
             this.showAddForm = false;
@@ -95,7 +96,7 @@ export class WarehouseAddUomComponent implements OnInit {
             this.isSubmitting = false;
           },
           error: () => {
-            this.errorMessage = 'Failed to update UOM. Please try again.';
+            this.toastService.error('Failed to update UOM. Please try again.');
             this.isSubmitting = false;
           }
         });
@@ -103,14 +104,14 @@ export class WarehouseAddUomComponent implements OnInit {
         // Create new UOM
         this.uomService.createUom(dto).subscribe({
           next: () => {
-            this.successMessage = 'UOM created successfully!';
+            this.toastService.success('UOM created successfully!');
             this.uomForm.reset();
             this.showAddForm = false;
             this.loadUoms();
             this.isSubmitting = false;
           },
           error: () => {
-            this.errorMessage = 'Failed to create UOM. Please try again.';
+            this.toastService.error('Failed to create UOM. Please try again.');
             this.isSubmitting = false;
           }
         });
@@ -133,12 +134,12 @@ export class WarehouseAddUomComponent implements OnInit {
     this.isDeleting = true;
     this.uomService.deleteUom(uomId).subscribe({
       next: () => {
-        this.successMessage = 'UOM deleted successfully!';
+        this.toastService.success('UOM deleted successfully!');
         this.loadUoms();
         this.isDeleting = false;
       },
       error: () => {
-        this.errorMessage = 'Failed to delete UOM. Please try again.';
+        this.toastService.error('Failed to delete UOM. Please try again.');
         this.isDeleting = false;
       }
     });

@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { ResolutionActionDTO, ExceptionEventDTO, ActionStatus, ResolutionActionUpsertDTO, AppUserDTO } from '../../../models';
 import { ExceptionEventService } from '../../../services/exception-event.service';
 import { ResolutionActionService } from '../../../services/resolution-action.service';
+import { ToastService } from '../../../services/toast.service';
 
 
 @Component({
@@ -28,11 +29,14 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
   successMessage = '';
 
   actionStatuses = Object.values(ActionStatus);
+  createActionStatuses: ActionStatus[] = [ActionStatus.InProgress, ActionStatus.Closed];
+  editActionStatuses: ActionStatus[] = [ActionStatus.Closed];
 
   constructor(
     private fb: FormBuilder,
     private actionService: ResolutionActionService,
-    private exceptionService: ExceptionEventService
+    private exceptionService: ExceptionEventService,
+    private toastService: ToastService
   ) {
     this.filterForm = this.fb.group({
       status: ['']
@@ -106,7 +110,7 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading resolution actions:', error);
-        this.errorMessage = 'Unable to load resolution actions.';
+        this.toastService.error('Unable to load resolution actions.');
         this.allUsers = [];
         this.filteredUsers = [];
         this.isLoading = false;
@@ -129,7 +133,7 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error filtering resolution actions:', error);
-        this.errorMessage = 'Unable to filter resolution actions.';
+        this.toastService.error('Unable to filter resolution actions.');
         this.isLoading = false;
       }
     });
@@ -140,6 +144,7 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
     this.showForm = true;
     this.isEditing = false;
     this.editingId = null;
+    this.editForm.patchValue({ status: ActionStatus.InProgress });
     this.successMessage = '';
     this.errorMessage = '';
     this.updateFilteredUsers(null);
@@ -203,7 +208,7 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
       ownerUserId: action.ownerUserId,
       actionDescription: action.actionDescription,
       dueDate: action.dueDate ? new Date(action.dueDate).toISOString().split('T')[0] : '',
-      status: action.status
+      status: ActionStatus.Closed
     });
     this.successMessage = '';
     this.errorMessage = '';
@@ -220,13 +225,13 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
       ownerUserId: null,
       actionDescription: '',
       dueDate: '',
-      status: ''
+      status: ActionStatus.InProgress
     });
   }
 
   save(): void {
     if (this.editForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields.';
+      this.toastService.error('Please fill in all required fields.');
       return;
     }
 
@@ -235,31 +240,31 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
       ownerUserId: this.editForm.value.ownerUserId,
       actionDescription: this.editForm.value.actionDescription,
       dueDate: this.editForm.value.dueDate || undefined,
-      status: this.editForm.value.status
+      status: this.isEditing ? ActionStatus.Closed : this.editForm.value.status
     };
 
     if (this.isEditing && this.editingId) {
       this.actionService.updateResolutionAction(this.editingId, dto).subscribe({
         next: () => {
-          this.successMessage = 'Resolution action updated successfully.';
+          this.toastService.success('Resolution action updated successfully.');
           this.loadActions();
           this.closeForm();
         },
         error: (error) => {
           console.error('Error updating resolution action:', error);
-          this.errorMessage = 'Failed to update resolution action.';
+          this.toastService.error('Failed to update resolution action.');
         }
       });
     } else {
       this.actionService.createResolutionAction(dto).subscribe({
         next: () => {
-          this.successMessage = 'Resolution action created successfully.';
+          this.toastService.success('Resolution action created successfully.');
           this.loadActions();
           this.closeForm();
         },
         error: (error) => {
           console.error('Error creating resolution action:', error);
-          this.errorMessage = 'Failed to create resolution action.';
+          this.toastService.error('Failed to create resolution action.');
         }
       });
     }

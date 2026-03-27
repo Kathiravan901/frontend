@@ -1,9 +1,10 @@
 @if (isVisible) {
-  <div class="form-container">
-    <div class="form-header">
-      <h3>{{ editingLocation ? 'Edit Location' : 'Add New Location' }}</h3>
-      <button (click)="onClose()" class="btn-close">&times;</button>
-    </div>
+  <div class="form-overlay" (click)="onClose()">
+    <div class="form-container" (click)="$event.stopPropagation()">
+      <div class="form-header">
+        <h3>{{ editingLocation ? 'Edit Location' : 'Add New Location' }}</h3>
+        <button (click)="onClose()" class="btn-close">&times;</button>
+      </div>
 
     <form [formGroup]="locationForm" (ngSubmit)="onSave()" class="location-form">
       <div class="form-group">
@@ -61,6 +62,7 @@
         </button>
         <button type="button" (click)="onClose()" class="btn btn-secondary">Cancel</button>
       </div>
-    </form>
+      </form>
+    </div>
   </div>
 }

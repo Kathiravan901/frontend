@@ -12,6 +12,14 @@ import { RiskSummaryDto } from '../../../models/kpi.model';
 export class ExecutiveRisksComponent {
   @Input() riskData: RiskSummaryDto | null = null;
 
+  getInventoryShortagePercent(): number {
+    if (!this.riskData || this.riskData.inventoryPositionsTotal <= 0) {
+      return 0;
+    }
+
+    return (this.riskData.inventoryShortagePositions / this.riskData.inventoryPositionsTotal) * 100;
+  }
+
   getRiskLevel(percentage: number): string {
     if (percentage >= 50) return 'critical';
     if (percentage >= 25) return 'high';

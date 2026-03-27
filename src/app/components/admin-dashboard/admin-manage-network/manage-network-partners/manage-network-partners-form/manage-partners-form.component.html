@@ -1,9 +1,10 @@
 @if (isVisible) {
-  <div class="form-container">
-    <div class="form-header">
-      <h3>{{ editingPartner ? 'Edit Partner' : 'Add New Partner' }}</h3>
-      <button (click)="onClose()" class="btn-close">&times;</button>
-    </div>
+  <div class="form-overlay" (click)="onClose()">
+    <div class="form-container" (click)="$event.stopPropagation()">
+      <div class="form-header">
+        <h3>{{ editingPartner ? 'Edit Partner' : 'Add New Partner' }}</h3>
+        <button (click)="onClose()" class="btn-close">&times;</button>
+      </div>
 
     <form [formGroup]="partnerForm" (ngSubmit)="onSave()" class="partner-form">
       <div class="form-group">
@@ -58,6 +59,7 @@
         </button>
         <button type="button" (click)="onClose()" class="btn btn-secondary">Cancel</button>
       </div>
-    </form>
+      </form>
+    </div>
   </div>
 }

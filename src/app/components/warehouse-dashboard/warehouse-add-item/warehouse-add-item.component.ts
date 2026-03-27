@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } 
 import { UomResponseDto, ItemCreateDto, ItemResponseDto } from '../../../models';
 import { ItemService } from '../../../services/item.service';
 import { UomService } from '../../../services/uom.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-warehouse-add-item',
@@ -29,7 +30,8 @@ export class WarehouseAddItemComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private itemService: ItemService,
-    private uomService: UomService
+    private uomService: UomService,
+    private toastService: ToastService
   ) {
     this.itemForm = this.fb.group({
       itemName: ['', [Validators.required, Validators.maxLength(100)]],
@@ -115,7 +117,7 @@ export class WarehouseAddItemComponent implements OnInit {
         const updateDto = { itemId: this.editingItemId, ...dto } as any;
         this.itemService.updateItem(updateDto).subscribe({
           next: () => {
-            this.successMessage = 'Item updated successfully!';
+            this.toastService.success('Item updated successfully!');
             this.itemForm.reset();
             this.editingItemId = null;
             this.showAddForm = false;
@@ -123,21 +125,21 @@ export class WarehouseAddItemComponent implements OnInit {
             this.isSubmitting = false;
           },
           error: () => {
-            this.errorMessage = 'Failed to update item. Please try again.';
+            this.toastService.error('Failed to update item. Please try again.');
             this.isSubmitting = false;
           }
         });
       } else {
         this.itemService.createItem(dto).subscribe({
           next: () => {
-            this.successMessage = 'Item created successfully!';
+            this.toastService.success('Item created successfully!');
             this.itemForm.reset();
             this.showAddForm = false;
             this.loadItems();
             this.isSubmitting = false;
           },
           error: () => {
-            this.errorMessage = 'Failed to create item. Please try again.';
+            this.toastService.error('Failed to create item. Please try again.');
             this.isSubmitting = false;
           }
         });
@@ -170,12 +172,12 @@ export class WarehouseAddItemComponent implements OnInit {
     this.isDeleting = true;
     this.itemService.deleteItem(itemId).subscribe({
       next: () => {
-        this.successMessage = 'Item deleted successfully!';
+        this.toastService.success('Item deleted successfully!');
         this.loadItems();
         this.isDeleting = false;
       },
       error: () => {
-        this.errorMessage = 'Failed to delete item. Please try again.';
+        this.toastService.error('Failed to delete item. Please try again.');
         this.isDeleting = false;
       }
     });

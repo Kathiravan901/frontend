@@ -53,4 +53,12 @@ export class ShipmentService {
   deliver(shipmentId: number, dto: ShipmentDeliveryDto): Observable<ShipmentResponseDto> {
     return this.http.post<ShipmentResponseDto>(`${this.apiUrl}/shipments/${shipmentId}/deliver`, dto);
   }
+
+  /**
+   * Update shipment status
+   * PUT /api/shipments/{shipmentId}/status
+   */
+  updateStatus(shipmentId: number, dto: any): Observable<ShipmentResponseDto> {
+    return this.http.put<ShipmentResponseDto>(`${this.apiUrl}/${shipmentId}/status`, dto);
+  }
 }

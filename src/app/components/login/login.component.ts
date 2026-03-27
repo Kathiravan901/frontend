@@ -104,6 +104,17 @@ export class LoginComponent implements OnInit {
         } else if (error.message) {
           errorMessage = error.message;
         }
+
+        // Normalize inactive/disabled account responses to a user-friendly message
+        const normalized = String(errorMessage).toLowerCase();
+        if (
+          normalized.includes('inactive') ||
+          normalized.includes('disabled') ||
+          normalized.includes('deactivated') ||
+          normalized.includes('not active')
+        ) {
+          errorMessage = 'Your account is inactive. Please contact the administrator.';
+        }
         
         this.error = errorMessage;
         console.error('Login error:', error);

@@ -162,13 +162,18 @@
               </div>
 
               <div class="mb-2">
-                <label class="form-label">Role ID</label>
-                <input type="number" class="form-control form-control-sm" formControlName="roleId" />
-              </div>
-
-              <div class="mb-2">
-                <label class="form-label">Role Name</label>
-                <input type="text" class="form-control form-control-sm" formControlName="roleName" />
+                <label class="form-label">Role</label>
+                <select class="form-select form-select-sm" formControlName="roleName">
+                  <option value="" disabled>Select role</option>
+                  @for (role of roleOptions; track role) {
+                    <option [value]="role">{{ role }}</option>
+                  }
+                </select>
+                @if (editForm.get('roleName')?.invalid && editForm.get('roleName')?.touched) {
+                  <small class="text-danger">
+                    Role is required
+                  </small>
+                }
               </div>
 
               <div class="mb-2">

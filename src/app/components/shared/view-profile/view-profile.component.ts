@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthenticationService } from '../../../services/authentication.service';
+import { ToastService } from '../../../services/toast.service';
 
 interface UserProfile {
   id?: string;
@@ -31,7 +32,7 @@ export class ViewProfileComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
 
-  constructor(private authService: AuthenticationService) {}
+  constructor(private authService: AuthenticationService, private toastService: ToastService) {}
 
   ngOnInit(): void {
     this.loadUserProfile();

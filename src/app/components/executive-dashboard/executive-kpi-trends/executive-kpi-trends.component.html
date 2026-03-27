@@ -1,17 +1,81 @@
-@if (trendsData) {
-  <h2 class="section-title">Performance Trends</h2>
+@if (viewTrendsData) {
+  <div class="kpi-trends">
+    <h2 class="section-title">Performance Trends</h2>
 
-  <!-- Performance Trends Child Component -->
-  <div class="row g-3 mb-4">
-    <div class="col-12">
-      <app-performance-trends [trendsData]="trendsData"></app-performance-trends>
+    <div class="card mb-3">
+      <div class="card-body py-2">
+        <form [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+          <div class="row g-2 align-items-end">
+            <div class="col-md-2">
+              <label for="trendScope" class="form-label mb-1 small">Scope</label>
+              <select id="trendScope" class="form-select form-select-sm" formControlName="scope">
+                <option value="Network">Network</option>
+                <option value="Lane">Lane</option>
+                <option value="Location">Location</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label for="trendFromDate" class="form-label mb-1 small">From Date</label>
+              <input id="trendFromDate" type="date" class="form-control form-control-sm" formControlName="fromDate">
+            </div>
+            <div class="col-md-2">
+              <label for="trendToDate" class="form-label mb-1 small">To Date</label>
+              <input id="trendToDate" type="date" class="form-control form-control-sm" formControlName="toDate">
+            </div>
+            <div class="col-md-2">
+              <label for="trendBucket" class="form-label mb-1 small">Bucket</label>
+              <select id="trendBucket" class="form-select form-select-sm" formControlName="bucket">
+                <option value="Day">Daily</option>
+                <option value="Week">Weekly</option>
+                <option value="Month">Monthly</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <label for="trendTopN" class="form-label mb-1 small">Top N Items</label>
+              <input id="trendTopN" type="number" min="1" max="50" class="form-control form-control-sm" formControlName="topNInventoryBars">
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+              <button type="submit" class="btn btn-primary btn-sm flex-grow-1" [disabled]="isLoading">
+                {{ isLoading ? 'Loading...' : 'Apply' }}
+              </button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="resetFilters()" [disabled]="isLoading">
+                Reset
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- Top Inventory Turns Child Component -->
-  <div class="row g-3">
-    <div class="col-12">
-      <app-top-inventory-turns [trendsData]="trendsData"></app-top-inventory-turns>
-    </div>
+    @if (errorMessage) {
+      <div class="alert alert-danger py-2 mb-3" role="alert">
+        <i class="bi bi-exclamation-circle me-1"></i>{{ errorMessage }}
+      </div>
+    }
+
+    @if (isLoading) {
+      <div class="d-flex justify-content-center align-items-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    }
+
+    @if (!isLoading) {
+
+      <!-- Performance Trends Child Component -->
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <app-performance-trends [trendsData]="viewTrendsData"></app-performance-trends>
+        </div>
+      </div>
+
+      <!-- Top Inventory Turns Child Component -->
+      <div class="row g-3">
+        <div class="col-12">
+          <app-top-inventory-turns [trendsData]="viewTrendsData"></app-top-inventory-turns>
+        </div>
+      </div>
+    }
   </div>
 }

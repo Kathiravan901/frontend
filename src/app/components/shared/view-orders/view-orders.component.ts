@@ -5,6 +5,7 @@ import { OrderService } from '@services/order.service';
 import { PartnerService } from '@services/partner.service';
 import { ItemService } from '@services/item.service';
 import { OrderContextService } from '@services/order-context.service';
+import { ToastService } from '@services/toast.service';
 import { OrderResponseDto, PartnerResponseDto, ItemResponseDto } from '@models/index';
 
 @Component({
@@ -19,6 +20,7 @@ export class ViewOrdersComponent implements OnInit {
   private partnerService = inject(PartnerService);
   private itemService = inject(ItemService);
   private orderContextService = inject(OrderContextService);
+  private toastService = inject(ToastService);
 
   orders: OrderResponseDto[] = [];
   filteredOrders: OrderResponseDto[] = [];
@@ -78,7 +80,7 @@ export class ViewOrdersComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        this.errorMessage = 'Failed to load orders.';
+        this.toastService.error('Failed to load orders.');
         this.isLoading = false;
       }
     });

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ManageUserService } from '../../../services/manage-user.service';
 import { AuditLogDTO } from '../../../models/audit-log.model';
+import { ToastService } from '../../../services/toast.service';
 
 interface AuditLog extends AuditLogDTO {}
 
@@ -25,7 +26,7 @@ export class AdminAuditLogsComponent implements OnInit {
   // Unique values for filter dropdowns
   uniqueActions: string[] = [];
 
-  constructor(private manageUserService: ManageUserService) {}
+  constructor(private manageUserService: ManageUserService, private toastService: ToastService) {}
 
   ngOnInit(): void {
     this.loadAuditLogs();
@@ -52,7 +53,7 @@ export class AdminAuditLogsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading audit logs:', error);
-        this.errorMessage = 'Failed to load audit logs from database';
+        this.toastService.error('Failed to load audit logs from database');
         this.isLoading = false;
       }
     });

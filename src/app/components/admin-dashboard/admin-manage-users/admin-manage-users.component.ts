@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { FormsModule } from '@angular/forms';
 import { ManageUserService } from '../../../services/manage-user.service';
 import { RouterLink, RouterOutlet } from "@angular/router";
+import { ToastService } from '../../../services/toast.service';
 
 interface UserData {
   userId: number;
@@ -31,19 +32,20 @@ export class AdminManageUsersComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
   searchQuery = '';
+  roleOptions: string[] = ['Admin', 'Executive', 'Logistics', 'Planner', 'Procurement', 'Warehouse'];
 
   editForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    private manageUserService: ManageUserService
+    private manageUserService: ManageUserService,
+    private toastService: ToastService
   ) {
     this.editForm = this.fb.group({
       userId: [null],
       displayName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
-      roleId: [null],
-      roleName: [''],
+      roleName: ['', Validators.required],
       status: ['Active', Validators.required]
     });
   }
@@ -69,7 +71,7 @@ export class AdminManageUsersComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading users:', error);
-        this.errorMessage = 'Failed to load users from database';
+        this.toastService.error('Failed to load users from database');
         this.isLoading = false;
       }
     });
@@ -93,7 +95,6 @@ export class AdminManageUsersComponent implements OnInit {
       userId: user.userId,
       displayName: user.displayName,
       email: user.email,
-      roleId: user.roleId,
       roleName: user.roleName,
       status: user.status
     });
@@ -109,7 +110,7 @@ export class AdminManageUsersComponent implements OnInit {
 
   save(): void {
     if (this.editForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields';
+      this.toastService.error('Please fill in all required fields');
       return;
     }
 
@@ -119,7 +120,7 @@ export class AdminManageUsersComponent implements OnInit {
       // Update existing user via PATCH
       this.manageUserService.editUser(formValue).subscribe({
         next: (response) => {
-          this.successMessage = 'User updated successfully!';
+          this.toastService.success('User updated successfully!');
           setTimeout(() => {
             this.successMessage = '';
             this.loadUsers();
@@ -138,7 +139,7 @@ export class AdminManageUsersComponent implements OnInit {
             errorMsg = `Server error: ${error.statusText}`;
           }
           
-          this.errorMessage = errorMsg;
+          this.toastService.error(errorMsg);
         }
       });
     }

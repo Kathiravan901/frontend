@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PartnerService } from '@services/partner.service';
+import { ToastService } from '@services/toast.service';
 import { PartnerResponseDto } from '@models/partner.model';
 
 @Component({
@@ -12,6 +13,7 @@ import { PartnerResponseDto } from '@models/partner.model';
 })
 export class ProcurementViewPartnersComponent implements OnInit {
   private partnerService = inject(PartnerService);
+  private toastService = inject(ToastService);
 
   partners: PartnerResponseDto[] = [];
   isLoading = false;
@@ -31,7 +33,7 @@ export class ProcurementViewPartnersComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        this.errorMessage = 'Failed to load partners.';
+        this.toastService.error('Failed to load partners.');
         this.isLoading = false;
       }
     });

@@ -8,6 +8,17 @@
     color: #2c3e50;
   }
 
+  .card {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    .form-label {
+      color: #495057;
+      font-weight: 600;
+    }
+  }
+
   .trend-card {
     background: #ffffff;
     border: 1px solid #e9ecef;

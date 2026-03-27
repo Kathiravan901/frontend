@@ -48,6 +48,8 @@
             <th>Item</th>
             <th>Quantity on Hand</th>
             <th>Safety Stock</th>
+            <th>Item Threshold</th>
+            <th>Reorder Level</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -59,8 +61,10 @@
               <td>{{ getItemName(item.itemId) }}</td>
               <td>{{ item.quantityOnHand }}</td>
               <td>{{ item.safetyStock }}</td>
-              <td [class]="item.quantityOnHand <= item.safetyStock ? 'low-stock' : 'in-stock'">
-                {{ item.quantityOnHand <= item.safetyStock ? 'Low Stock' : 'In Stock' }}
+              <td>{{ getItemThresholdValue(item) }}</td>
+              <td>{{ getReorderLevel(item) }}</td>
+              <td [class]="isLowStock(item) ? 'low-stock' : 'in-stock'">
+                {{ getStockStatus(item) }}
               </td>
               <td>
                 <button (click)="openAdjustForm(item)">Adjust</button>

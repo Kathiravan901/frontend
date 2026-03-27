@@ -5,6 +5,7 @@ import { InventoryPositionResponseDto, ItemResponseDto, LocationResponseDto, Inv
 import { InventoryService } from '../../../services/inventory.service';
 import { ItemService } from '../../../services/item.service';
 import { LocationService } from '../../../services/location.service';
+import { ToastService } from '../../../services/toast.service';
 
 
 @Component({
@@ -34,7 +35,8 @@ export class WarehouseManageInventoryComponent implements OnInit {
     private fb: FormBuilder,
     private inventoryService: InventoryService,
     private itemService: ItemService,
-    private locationService: LocationService
+    private locationService: LocationService,
+    private toastService: ToastService
   ) {
     this.filters = this.fb.group({
       locationId: [''],
@@ -114,6 +116,32 @@ export class WarehouseManageInventoryComponent implements OnInit {
     return location ? location.name : 'Unknown';
   }
 
+  getItemThresholdValue(position: InventoryPositionResponseDto): number {
+    if (typeof position.itemThreshold === 'number' && !Number.isNaN(position.itemThreshold)) {
+      return position.itemThreshold;
+    }
+
+    const masterItem = this.items.find(i => i.itemId === position.itemId);
+    return masterItem?.itemThreshold ?? 0;
+  }
+
+  getReorderLevel(position: InventoryPositionResponseDto): number {
+    if (position.reorderLevel !== undefined && position.reorderLevel !== null) {
+      return position.reorderLevel;
+    }
+
+    const threshold = this.getItemThresholdValue(position);
+    return Math.max(position.safetyStock, threshold);
+  }
+
+  isLowStock(position: InventoryPositionResponseDto): boolean {
+    return position.quantityOnHand < this.getReorderLevel(position);
+  }
+
+  getStockStatus(position: InventoryPositionResponseDto): string {
+    return this.isLowStock(position) ? 'Low Stock' : 'In Stock';
+  }
+
   onFilter() {
     this.loadInventory();
   }
@@ -147,13 +175,13 @@ export class WarehouseManageInventoryComponent implements OnInit {
 
       this.inventoryService.adjustInventory(dto).subscribe({
         next: (response) => {
-          this.successMessage = 'Inventory adjusted successfully!';
+          this.toastService.success('Inventory adjusted successfully!');
           this.loadInventory(); // Refresh the list
           this.closeAdjustForm();
           this.isAdjusting = false;
         },
         error: (error) => {
-          this.errorMessage = 'Failed to adjust inventory. Please try again.';
+          this.toastService.error('Failed to adjust inventory. Please try again.');
           this.isAdjusting = false;
         }
       });
@@ -184,13 +212,13 @@ export class WarehouseManageInventoryComponent implements OnInit {
 
       this.inventoryService.adjustInventory(dto).subscribe({
         next: (response) => {
-          this.successMessage = 'Inventory created successfully!';
+          this.toastService.success('Inventory created successfully!');
           this.loadInventory();
           this.closeCreateForm();
           this.isCreating = false;
         },
         error: (error) => {
-          this.errorMessage = 'Failed to create inventory. Please try again.';
+          this.toastService.error('Failed to create inventory. Please try again.');
           this.isCreating = false;
         }
       });

@@ -9,15 +9,21 @@
           <option value="SO" [disabled]="isOrderTypeDisabled('SO')">Sales Order</option>
           <option value="Transfer" [disabled]="isOrderTypeDisabled('Transfer')">Transfer</option>
         </select>
+        @if (orderForm.get('orderType')?.touched && orderForm.get('orderType')?.invalid) {
+          <small class="text-danger">Order type is required.</small>
+        }
       </div>
       <div class="form-group">
-        <label for="partnerId">Partner:</label>
+        <label for="partnerId">Partner @if (orderForm.get('orderType')?.value === 'PO') {<span class="text-danger">*</span>}:</label>
         <select id="partnerId" formControlName="partnerId">
           <option value="">Select Partner</option>
           @for (partner of filteredPartners; track partner.partnerId) {
             <option [value]="partner.partnerId">{{ partner.partnerName }}</option>
           }
         </select>
+        @if (orderForm.get('partnerId')?.touched && orderForm.get('partnerId')?.invalid) {
+          <small class="text-danger">Partner is required for purchase orders.</small>
+        }
       </div>
     </div>
     <div class="form-row">
@@ -29,6 +35,9 @@
             <option [value]="location.locationId">{{ location.name }}</option>
           }
         </select>
+        @if (orderForm.get('originLocationId')?.touched && orderForm.get('originLocationId')?.invalid) {
+          <small class="text-danger">Origin location is required for this order type.</small>
+        }
       </div>
       <div class="form-group">
         <label for="destinationLocationId">Destination Location:</label>
@@ -38,16 +47,28 @@
             <option [value]="location.locationId">{{ location.name }}</option>
           }
         </select>
+        @if (orderForm.get('destinationLocationId')?.touched && orderForm.get('destinationLocationId')?.invalid) {
+          <small class="text-danger">Destination location is required for this order type.</small>
+        }
+        @if (orderForm.get('orderType')?.value === 'Transfer' && orderForm.get('originLocationId')?.value && orderForm.get('destinationLocationId')?.value && orderForm.get('originLocationId')?.value === orderForm.get('destinationLocationId')?.value) {
+          <small class="text-danger">Origin and Destination cannot be the same for transfer orders.</small>
+        }
       </div>
     </div>
     <div class="form-row">
       <div class="form-group">
         <label for="orderDate">Order Date:</label>
         <input type="date" id="orderDate" formControlName="orderDate" required>
+        @if (orderForm.get('orderDate')?.touched && orderForm.get('orderDate')?.invalid) {
+          <small class="text-danger">Order date is required.</small>
+        }
       </div>
       <div class="form-group">
         <label for="expectedDeliveryDate">Expected Delivery Date:</label>
         <input type="date" id="expectedDeliveryDate" formControlName="expectedDeliveryDate">
+        @if (orderForm.get('expectedDeliveryDate')?.touched && orderForm.get('expectedDeliveryDate')?.errors?.['expectedBeforeOrderDate']) {
+          <small class="text-danger">Expected delivery date cannot be earlier than order date.</small>
+        }
       </div>
     </div>
 
@@ -64,14 +85,23 @@
                   <option [value]="item.itemId">{{ item.itemName }}</option>
                 }
               </select>
+              @if (line.get('itemId')?.touched && line.get('itemId')?.invalid) {
+                <small class="text-danger">Item is required.</small>
+              }
             </div>
             <div class="form-group">
               <label>Quantity:</label>
               <input type="number" formControlName="qtyOrdered" min="1" required>
+              @if (line.get('qtyOrdered')?.touched && line.get('qtyOrdered')?.invalid) {
+                <small class="text-danger">Quantity must be at least 1.</small>
+              }
             </div>
             <div class="form-group">
               <label>Unit Price:</label>
               <input type="number" formControlName="unitPrice" min="0" step="0.01" required>
+              @if (line.get('unitPrice')?.touched && line.get('unitPrice')?.invalid) {
+                <small class="text-danger">Unit price cannot be negative.</small>
+              }
             </div>
             @if (orderLines.length > 1) {
               <button type="button" class="btn-remove-line" (click)="removeOrderLine(i)">Remove</button>
@@ -86,10 +116,4 @@
       <button type="submit" class="btn-submit" [disabled]="orderForm.invalid || isSubmitting">Place Order</button>
     </div>
   </form>
-  @if (successMessage) {
-    <div class="success">{{ successMessage }}</div>
-  }
-  @if (errorMessage) {
-    <div class="error">{{ errorMessage }}</div>
-  }
 </div>

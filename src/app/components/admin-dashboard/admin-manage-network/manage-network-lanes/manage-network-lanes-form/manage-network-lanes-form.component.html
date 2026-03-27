@@ -1,79 +1,81 @@
 @if (isVisible) {
-  <div class="form-container">
-    <div class="form-header">
-      <h3>{{ editingLane ? 'Edit Lane' : 'Add New Lane' }}</h3>
-      <button (click)="onClose()" class="btn-close">&times;</button>
+  <div class="form-overlay" (click)="onClose()">
+    <div class="form-container" (click)="$event.stopPropagation()">
+      <div class="form-header">
+        <h3>{{ editingLane ? 'Edit Lane' : 'Add New Lane' }}</h3>
+        <button (click)="onClose()" class="btn-close">&times;</button>
+      </div>
+
+      <form [formGroup]="laneForm" (ngSubmit)="onSave()" class="lane-form">
+        <div class="form-group">
+          <label for="originLocationId">Origin Location *</label>
+          <select id="originLocationId" formControlName="originLocationId" class="form-control" required>
+            <option value="">Select Origin</option>
+            @for (loc of locations; track loc.locationId) {
+              <option [value]="loc.locationId">{{ loc.name }}</option>
+            }
+          </select>
+          @if (laneForm.get('originLocationId')?.invalid && laneForm.get('originLocationId')?.touched) {
+            <div class="error-message">
+              Origin location is required
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="destinationLocationId">Destination Location *</label>
+          <select id="destinationLocationId" formControlName="destinationLocationId" class="form-control" required>
+            <option value="">Select Destination</option>
+            @for (loc of locations; track loc.locationId) {
+              <option [value]="loc.locationId">{{ loc.name }}</option>
+            }
+          </select>
+          @if (laneForm.get('destinationLocationId')?.invalid && laneForm.get('destinationLocationId')?.touched) {
+            <div class="error-message">
+              Destination location is required
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="mode">Transport Mode *</label>
+          <select id="mode" formControlName="mode" class="form-control" required>
+            <option value="">Select Mode</option>
+            @for (mode of transportModes; track mode) {
+              <option [value]="mode">{{ mode }}</option>
+            }
+          </select>
+          @if (laneForm.get('mode')?.invalid && laneForm.get('mode')?.touched) {
+            <div class="error-message">
+              Transport mode is required
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="transitTimeDays">Transit Time (Days) *</label>
+          <input
+            id="transitTimeDays"
+            type="number"
+            formControlName="transitTimeDays"
+            class="form-control"
+            placeholder="Enter transit time"
+            required
+          />
+          @if (laneForm.get('transitTimeDays')?.invalid && laneForm.get('transitTimeDays')?.touched) {
+            <div class="error-message">
+              Transit time is required and must be positive
+            </div>
+          }
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" [disabled]="laneForm.invalid" class="btn btn-primary">
+            {{ editingLane ? 'Update' : 'Add' }} Lane
+          </button>
+          <button type="button" (click)="onClose()" class="btn btn-secondary">Cancel</button>
+        </div>
+      </form>
     </div>
-
-    <form [formGroup]="laneForm" (ngSubmit)="onSave()" class="lane-form">
-      <div class="form-group">
-        <label for="originLocationId">Origin Location *</label>
-        <select id="originLocationId" formControlName="originLocationId" class="form-control" required>
-          <option value="">Select Origin</option>
-          @for (loc of locations; track loc.locationId) {
-            <option [value]="loc.locationId">{{ loc.name }}</option>
-          }
-        </select>
-        @if (laneForm.get('originLocationId')?.invalid && laneForm.get('originLocationId')?.touched) {
-          <div class="error-message">
-            Origin location is required
-          </div>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="destinationLocationId">Destination Location *</label>
-        <select id="destinationLocationId" formControlName="destinationLocationId" class="form-control" required>
-          <option value="">Select Destination</option>
-          @for (loc of locations; track loc.locationId) {
-            <option [value]="loc.locationId">{{ loc.name }}</option>
-          }
-        </select>
-        @if (laneForm.get('destinationLocationId')?.invalid && laneForm.get('destinationLocationId')?.touched) {
-          <div class="error-message">
-            Destination location is required
-          </div>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="mode">Transport Mode *</label>
-        <select id="mode" formControlName="mode" class="form-control" required>
-          <option value="">Select Mode</option>
-          @for (mode of transportModes; track mode) {
-            <option [value]="mode">{{ mode }}</option>
-          }
-        </select>
-        @if (laneForm.get('mode')?.invalid && laneForm.get('mode')?.touched) {
-          <div class="error-message">
-            Transport mode is required
-          </div>
-        }
-      </div>
-
-      <div class="form-group">
-        <label for="transitTimeDays">Transit Time (Days) *</label>
-        <input
-          id="transitTimeDays"
-          type="number"
-          formControlName="transitTimeDays"
-          class="form-control"
-          placeholder="Enter transit time"
-          required
-        />
-        @if (laneForm.get('transitTimeDays')?.invalid && laneForm.get('transitTimeDays')?.touched) {
-          <div class="error-message">
-            Transit time is required and must be positive
-          </div>
-        }
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" [disabled]="laneForm.invalid" class="btn btn-primary">
-          {{ editingLane ? 'Update' : 'Add' }} Lane
-        </button>
-        <button type="button" (click)="onClose()" class="btn btn-secondary">Cancel</button>
-      </div>
-    </form>
   </div>
 }

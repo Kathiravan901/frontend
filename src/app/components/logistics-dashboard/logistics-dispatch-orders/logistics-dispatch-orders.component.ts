@@ -5,6 +5,7 @@ import { OrderResponseDto, PartnerResponseDto, ShipmentDispatchDto } from '../..
 import { OrderService } from '../../../services/order.service';
 import { PartnerService } from '../../../services/partner.service';
 import { ShipmentService } from '../../../services/shipment.service';
+import { ToastService } from '../../../services/toast.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -32,7 +33,8 @@ export class LogisticsDispatchOrdersComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private orderService: OrderService,
     private partnerService: PartnerService,
-    private shipmentService: ShipmentService
+    private shipmentService: ShipmentService,
+    private toastService: ToastService
   ) {
     this.dispatchForm = this.fb.group({
       carrierPartnerId: [null, Validators.required],
@@ -61,7 +63,7 @@ export class LogisticsDispatchOrdersComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => {
         console.error('Error loading orders:', error);
-        this.errorMessage = 'Failed to load orders';
+        this.toastService.error('Failed to load orders');
         this.isLoading = false;
       }
     });
@@ -74,6 +76,7 @@ export class LogisticsDispatchOrdersComponent implements OnInit, OnDestroy {
       },
       error: (error: any) => {
         console.error('Error loading partners:', error);
+        this.toastService.error('Failed to load partners');
       }
     });
   }
@@ -141,7 +144,12 @@ export class LogisticsDispatchOrdersComponent implements OnInit, OnDestroy {
 
       this.shipmentService.dispatch(this.selectedOrder.orderId, dto).subscribe({
         next: (response) => {
-          this.successMessage = 'Order dispatched successfully!';
+          const inventoryMessage = this.selectedOrder?.orderType === 'SO' || this.selectedOrder?.orderType === 'Transfer'
+            ? ' Inventory updated automatically.'
+            : '';
+          this.toastService.success(`Order dispatched successfully!${inventoryMessage}`);
+          this.successMessage = '';
+          this.errorMessage = '';
           this.orders = this.orders.filter(o => o.orderId !== this.selectedOrder!.orderId);
           this.closeDispatchForm();
           this.isDispatching = false;
@@ -149,12 +157,14 @@ export class LogisticsDispatchOrdersComponent implements OnInit, OnDestroy {
         error: (error) => {
           // Extract specific error message from backend
           if (error.error?.error) {
-            this.errorMessage = error.error.error;
+            this.toastService.error(error.error.error);
           } else if (error.status === 400) {
-            this.errorMessage = 'Invalid dispatch information. Check inventory levels and adjust as needed.';
+            this.toastService.error('Invalid dispatch information. Check inventory levels and adjust as needed.');
           } else {
-            this.errorMessage = 'Failed to dispatch order. Please try again.';
+            this.toastService.error('Failed to dispatch order. Please try again.');
           }
+          this.successMessage = '';
+          this.errorMessage = '';
           this.isDispatching = false;
         }
       });

@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ItemResponseDto, PartnerResponseDto, LocationResponseDto, OrderCreateDto } from '../../../models';
 import { ItemService } from '../../../services/item.service';
 import { LocationService } from '../../../services/location.service';
 import { OrderService } from '../../../services/order.service';
 import { PartnerService } from '../../../services/partner.service';
 import { OrderContextService } from '../../../services/order-context.service';
+import { ToastService } from '../../../services/toast.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -25,6 +26,7 @@ export class AddOrderComponent implements OnInit, OnDestroy {
   private partnerService = inject(PartnerService);
   private locationService = inject(LocationService);
   private orderContextService = inject(OrderContextService);
+  private toastService = inject(ToastService);
 
   orderForm: FormGroup;
   items: ItemResponseDto[] = [];
@@ -44,7 +46,7 @@ export class AddOrderComponent implements OnInit, OnDestroy {
       originLocationId: [null],
       destinationLocationId: [null],
       orderDate: [new Date().toISOString().split('T')[0], Validators.required],
-      expectedDeliveryDate: [''],
+      expectedDeliveryDate: ['', this.expectedDeliveryDateValidator.bind(this)],
       lines: this.fb.array([])
     });
   }
@@ -55,6 +57,13 @@ export class AddOrderComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((disabledTypes) => {
         this.disabledOrderTypes = disabledTypes;
+
+        const currentOrderType = this.orderForm.get('orderType')?.value;
+        if (currentOrderType && this.isOrderTypeDisabled(currentOrderType)) {
+          const fallbackOrderType = this.getFirstAvailableOrderType();
+          this.orderForm.patchValue({ orderType: fallbackOrderType });
+          this.applyOrderTypeValidators(fallbackOrderType);
+        }
       });
 
     this.loadItems();
@@ -66,12 +75,15 @@ export class AddOrderComponent implements OnInit, OnDestroy {
     this.orderForm.get('orderType')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe((orderType) => {
+        this.applyOrderTypeValidators(orderType);
         this.updateFilteredPartners(orderType);
         this.orderForm.patchValue({ partnerId: null }); // Reset partner selection
       });
     
     // Initial population of filtered partners (when partners are loaded)
-    this.updateFilteredPartners(this.orderForm.get('orderType')?.value);
+    const initialOrderType = this.orderForm.get('orderType')?.value;
+    this.applyOrderTypeValidators(initialOrderType);
+    this.updateFilteredPartners(initialOrderType);
   }
 
   ngOnDestroy() {
@@ -102,7 +114,7 @@ export class AddOrderComponent implements OnInit, OnDestroy {
         this.items = data;
       },
       error: (error) => {
-        this.errorMessage = 'Failed to load items.';
+        this.toastService.error('Failed to load items.');
       }
     });
   }
@@ -114,7 +126,7 @@ export class AddOrderComponent implements OnInit, OnDestroy {
         this.updateFilteredPartners(this.orderForm.get('orderType')?.value);
       },
       error: (error) => {
-        this.errorMessage = 'Failed to load partners.';
+        this.toastService.error('Failed to load partners.');
       }
     });
   }
@@ -156,12 +168,95 @@ export class AddOrderComponent implements OnInit, OnDestroy {
         this.locations = data;
       },
       error: (error) => {
-        this.errorMessage = 'Failed to load locations.';
+        this.toastService.error('Failed to load locations.');
       }
     });
   }
 
+  private expectedDeliveryDateValidator(control: AbstractControl): ValidationErrors | null {
+    const expectedDate = control.value;
+    const orderDate = this.orderForm?.get('orderDate')?.value;
+
+    if (!expectedDate || !orderDate) {
+      return null;
+    }
+
+    const expected = new Date(expectedDate);
+    const order = new Date(orderDate);
+
+    if (expected < order) {
+      return { expectedBeforeOrderDate: true };
+    }
+
+    return null;
+  }
+
+  private applyOrderTypeValidators(orderType: string): void {
+    const partnerControl = this.orderForm.get('partnerId');
+    const originControl = this.orderForm.get('originLocationId');
+    const destinationControl = this.orderForm.get('destinationLocationId');
+
+    partnerControl?.clearValidators();
+    originControl?.clearValidators();
+    destinationControl?.clearValidators();
+
+    if (orderType === 'PO') {
+      partnerControl?.setValidators([Validators.required]);
+      destinationControl?.setValidators([Validators.required]);
+    }
+
+    if (orderType === 'SO') {
+      originControl?.setValidators([Validators.required]);
+    }
+
+    if (orderType === 'Transfer') {
+      originControl?.setValidators([Validators.required]);
+      destinationControl?.setValidators([Validators.required]);
+    }
+
+    partnerControl?.updateValueAndValidity({ emitEvent: false });
+    originControl?.updateValueAndValidity({ emitEvent: false });
+    destinationControl?.updateValueAndValidity({ emitEvent: false });
+    this.orderForm.get('expectedDeliveryDate')?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private getFirstAvailableOrderType(): string {
+    const available = ['PO', 'SO', 'Transfer'].filter(type => !this.isOrderTypeDisabled(type));
+    return available.length > 0 ? available[0] : 'Transfer';
+  }
+
+  private markAllAsTouched(): void {
+    this.orderForm.markAllAsTouched();
+    this.orderLines.controls.forEach(line => line.markAllAsTouched());
+  }
+
+  private hasInvalidTransferLocations(): boolean {
+    const orderType = this.orderForm.get('orderType')?.value;
+    const origin = this.orderForm.get('originLocationId')?.value;
+    const destination = this.orderForm.get('destinationLocationId')?.value;
+
+    return orderType === 'Transfer' && !!origin && !!destination && Number(origin) === Number(destination);
+  }
+
   onSubmit() {
+    const orderType = this.orderForm.get('orderType')?.value;
+
+    if (this.isOrderTypeDisabled(orderType)) {
+      this.toastService.error('You are not authorized to place this order type.');
+      return;
+    }
+
+    if (!this.orderForm.valid) {
+      this.markAllAsTouched();
+      this.toastService.error('Please fill in all required fields correctly.');
+      return;
+    }
+
+    if (this.hasInvalidTransferLocations()) {
+      this.toastService.error('Origin and Destination must be different for Transfer orders.');
+      return;
+    }
+
     if (this.orderForm.valid) {
       this.isSubmitting = true;
       this.successMessage = '';
@@ -180,9 +275,12 @@ export class AddOrderComponent implements OnInit, OnDestroy {
 
       this.orderService.placeOrder(dto).subscribe({
         next: (response) => {
-          this.successMessage = 'Order placed successfully!';
+          this.toastService.success('Order placed successfully!');
+          this.successMessage = '';
           this.orderForm.reset();
-          this.orderForm.patchValue({ orderType: 'PO', orderDate: new Date().toISOString().split('T')[0] });
+          const fallbackOrderType = this.getFirstAvailableOrderType();
+          this.orderForm.patchValue({ orderType: fallbackOrderType, orderDate: new Date().toISOString().split('T')[0] });
+          this.applyOrderTypeValidators(fallbackOrderType);
           while (this.orderLines.length > 0) {
             this.orderLines.removeAt(0);
           }
@@ -190,7 +288,8 @@ export class AddOrderComponent implements OnInit, OnDestroy {
           this.isSubmitting = false;
         },
         error: (error) => {
-          this.errorMessage = 'Failed to place order. Please try again.';
+          this.toastService.error('Failed to place order. Please try again.');
+          this.errorMessage = '';
           this.isSubmitting = false;
         }
       });

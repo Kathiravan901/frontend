@@ -10,6 +10,7 @@
         <i class="bi bi-plus-circle"></i> Add Item
       </button>
     }
+  </div>
 
   <!-- Search Filter -->
   <div class="filters">
@@ -46,7 +47,7 @@
             <tr>
               <td><strong>{{ item.itemName }}</strong></td>
               <td>{{ item.category || '-' }}</td>
-              <td>${{ item.unitPrice | number: '1.2-2' }}</td>
+              <td>{{ item.unitPrice | currency:'INR':'symbol':'1.2-2':'en-IN' }}</td>
               <td><span class="badge-uom">{{ getUomCode(item.uomId) }}</span></td>
               <td>{{ item.itemThreshold }}</td>
               <td class="actions-cell">
@@ -124,7 +125,7 @@
             <div class="form-group">
               <label for="unitPrice">Unit Price <span class="required">*</span></label>
               <div class="input-with-prefix">
-                <span class="prefix">$</span>
+                <span class="prefix">₹</span>
                 <input 
                   type="number" 
                   id="unitPrice" 
@@ -226,7 +227,7 @@
             </div>
             <div class="detail-row">
               <span class="label">Unit Price:</span>
-              <span class="value">${{ selectedItem.unitPrice | number: '1.2-2' }}</span>
+              <span class="value">{{ selectedItem.unitPrice | currency:'INR':'symbol':'1.2-2':'en-IN' }}</span>
             </div>
             <div class="detail-row">
               <span class="label">Unit of Measure:</span>

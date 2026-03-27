@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CreateUserDTO } from '../../../models';
 import { UserService } from '../../../services/user.service';
 import { AuthenticationService } from '../../../services/authentication.service';
+import { ToastService } from '../../../services/toast.service';
 
 
 @Component({
@@ -36,7 +37,8 @@ export class AdminCreateUserComponent implements OnInit {
     private fb: FormBuilder,
     private userService: UserService,
     private authService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {
     this.userForm = this.fb.group({
       displayName: ['', Validators.required],
@@ -82,7 +84,7 @@ export class AdminCreateUserComponent implements OnInit {
 
   submit(): void {
     if (this.userForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields correctly.';
+      this.toastService.error('Please fill in all required fields correctly.');
       return;
     }
 
@@ -95,13 +97,13 @@ export class AdminCreateUserComponent implements OnInit {
     const loggedInUserId = this.authService.getCurrentUserId();
 
     if (!resolvedRoleId) {
-      this.errorMessage = 'Unable to map selected role to a valid role ID. Please select a valid role name.';
+      this.toastService.error('Unable to map selected role to a valid role ID. Please select a valid role name.');
       this.isSubmitting = false;
       return;
     }
 
     if (!loggedInUserId) {
-      this.errorMessage = 'Session user is missing. Please login again and try creating the user.';
+      this.toastService.error('Session user is missing. Please login again and try creating the user.');
       this.isSubmitting = false;
       return;
     }
@@ -119,7 +121,7 @@ export class AdminCreateUserComponent implements OnInit {
 
     this.userService.createUser(dto).subscribe({
       next: (message) => {
-        this.successMessage = message ?? 'User created successfully.';
+        this.toastService.success(message ?? 'User created successfully.');
         this.userForm.reset({ roleName: '', status: 'Active' });
         this.isSubmitting = false;
         // Navigate back to users list after 2 seconds
@@ -137,7 +139,7 @@ export class AdminCreateUserComponent implements OnInit {
           errorMsg = error.message;
         }
         
-        this.errorMessage = errorMsg;
+        this.toastService.error(errorMsg);
         this.isSubmitting = false;
       }
     });

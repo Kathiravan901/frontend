@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ShipmentResponseDto, PartnerResponseDto, OrderResponseDto } from '../../../models';
+import { ShipmentService } from '../../../services/shipment.service';
 import { OrderService } from '../../../services/order.service';
 import { PartnerService } from '../../../services/partner.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-logistics-manage-shipments',
@@ -25,17 +27,27 @@ export class LogisticsManageShipmentsComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
   updatingShipmentId: number | null = null;
+  showStatusUpdateModal = false;
+  shipmentForStatusUpdate: ShipmentResponseDto | null = null;
+  selectedStatus = '';
+  statusUpdateOptions: string[] = ['In Transit', 'Delayed', 'Delivered'];
+  updateStatusForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
+    private shipmentService: ShipmentService,
     private orderService: OrderService,
-    private partnerService: PartnerService
+    private partnerService: PartnerService,
+    private toastService: ToastService
   ) {
     this.filters = this.fb.group({
       status: [''],
       carrierPartnerId: [''],
       fromDate: [''],
       toDate: ['']
+    });
+    this.updateStatusForm = this.fb.group({
+      status: ['', Validators.required]
     });
   }
 
@@ -63,7 +75,7 @@ export class LogisticsManageShipmentsComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Error loading shipments:', error);
-        this.errorMessage = 'Failed to load shipments';
+        this.toastService.error('Failed to load shipments');
         this.isLoading = false;
       }
     });
@@ -151,7 +163,7 @@ export class LogisticsManageShipmentsComponent implements OnInit {
       .deliverShipment(shipment.shipmentId, { actualArrivalUtc: new Date() })
       .subscribe({
         next: () => {
-          this.successMessage = `Shipment #${shipment.shipmentId} marked as Delivered.`;
+          this.toastService.success(`Shipment #${shipment.shipmentId} marked as Delivered.`);
           this.loadShipments();
           if (this.selectedShipment?.shipmentId === shipment.shipmentId) {
             this.closeShipmentDetails();
@@ -160,10 +172,64 @@ export class LogisticsManageShipmentsComponent implements OnInit {
         },
         error: (error: any) => {
           console.error('Error marking shipment delivered:', error);
-          this.errorMessage = error?.error?.error || 'Failed to update shipment status';
+          this.toastService.error(error?.error?.error || 'Failed to update shipment status');
           this.updatingShipmentId = null;
         }
       });
+  }
+
+  openStatusUpdateModal(shipment: ShipmentResponseDto): void {
+    this.shipmentForStatusUpdate = shipment;
+    this.selectedStatus = shipment.status || '';
+    this.updateStatusForm.patchValue({ status: shipment.status || '' });
+    this.showStatusUpdateModal = true;
+  }
+
+  closeStatusUpdateModal(): void {
+    this.showStatusUpdateModal = false;
+    this.shipmentForStatusUpdate = null;
+    this.selectedStatus = '';
+    this.updateStatusForm.reset();
+  }
+
+  updateShipmentStatus(): void {
+    if (!this.shipmentForStatusUpdate?.shipmentId || !this.updateStatusForm.valid) {
+      return;
+    }
+
+    const newStatus = this.updateStatusForm.get('status')?.value;
+    const shipmentId = this.shipmentForStatusUpdate.shipmentId;
+
+    this.updatingShipmentId = shipmentId;
+    this.errorMessage = '';
+
+    // Create update payload based on status
+    const updatePayload = this.buildStatusUpdatePayload(newStatus);
+
+    this.shipmentService.updateStatus(shipmentId, { status: newStatus, ...updatePayload }).subscribe({
+      next: () => {
+        this.toastService.success(`Shipment #${shipmentId} status updated to ${newStatus}.`);
+        this.loadShipments();
+        this.closeStatusUpdateModal();
+        if (this.selectedShipment?.shipmentId === shipmentId) {
+          this.closeShipmentDetails();
+        }
+        this.updatingShipmentId = null;
+      },
+      error: (error: any) => {
+        console.error('Error updating shipment status:', error);
+        this.toastService.error(error?.error?.error || 'Failed to update shipment status');
+        this.updatingShipmentId = null;
+      }
+    });
+  }
+
+  private buildStatusUpdatePayload(status: string): any {
+    const payload: any = {};
+    if (status.toLowerCase() === 'delivered') {
+      payload.actualArrivalUtc = new Date();
+    }
+    return payload;
   }
 
   getPartnerName(partnerId: number | null | undefined): string {

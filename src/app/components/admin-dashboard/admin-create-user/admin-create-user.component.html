@@ -97,9 +97,6 @@
         </div>
 
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-end mt-4">
-          <button class="btn btn-secondary" type="button" (click)="cancel()">
-            <i class="bi bi-arrow-left me-2"></i>Back to Users
-          </button>
           <button class="btn btn-primary" type="submit" [disabled]="isSubmitting || userForm.invalid">
             <i class="bi bi-person-plus me-2"></i>{{ isSubmitting ? 'Creating...' : 'Create User' }}
           </button>

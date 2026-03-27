@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ExceptionEventDTO, ExceptionType, ExceptionSeverity, ActionStatus, ExceptionEventUpsertDTO } from '../../../models';
 import { ExceptionEventService } from '../../../services/exception-event.service';
+import { ToastService } from '../../../services/toast.service';
 
 
 @Component({
@@ -26,24 +27,33 @@ export class PlannerManageExceptionEventsComponent implements OnInit {
   exceptionTypes = Object.values(ExceptionType);
   exceptionSeverities = Object.values(ExceptionSeverity);
   actionStatuses = Object.values(ActionStatus);
+  createActionStatuses: ActionStatus[] = [ActionStatus.Open, ActionStatus.InProgress];
+  editActionStatuses: ActionStatus[] = [ActionStatus.Open, ActionStatus.InProgress];
+  referenceTypeOptions = [
+    { label: 'Order', value: 'Order' },
+    { label: 'Shipment', value: 'Shipment' },
+    { label: 'Inventory', value: 'InventoryPosition' }
+  ];
 
   constructor(
     private fb: FormBuilder,
-    private exceptionService: ExceptionEventService
+    private exceptionService: ExceptionEventService,
+    private toastService: ToastService
   ) {
     this.filterForm = this.fb.group({
       type: [''],
       severity: [''],
+      referenceType: [''],
       status: ['']
     });
 
     this.editForm = this.fb.group({
       type: ['', Validators.required],
       referenceType: ['', Validators.required],
-      referenceId: [null, Validators.required],
+      referenceId: [null],
       detectedDate: [new Date().toISOString().split('T')[0], Validators.required],
       severity: ['', Validators.required],
-      status: ['', Validators.required]
+      status: [ActionStatus.Open, Validators.required]
     });
   }
 
@@ -60,15 +70,15 @@ export class PlannerManageExceptionEventsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading exception events:', error);
-        this.errorMessage = 'Unable to load exception events.';
+        this.toastService.error('Unable to load exception events.');
         this.isLoading = false;
       }
     });
   }
 
   applyFilter(): void {
-    const { type, severity, status } = this.filterForm.value;
-    if (!type && !severity && !status) {
+    const { type, severity, referenceType, status } = this.filterForm.value;
+    if (!type && !severity && !referenceType && !status) {
       this.loadEvents();
       return;
     }
@@ -81,7 +91,7 @@ export class PlannerManageExceptionEventsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error filtering exception events:', error);
-        this.errorMessage = 'Unable to filter exception events.';
+        this.toastService.error('Unable to filter exception events.');
         this.isLoading = false;
       }
     });
@@ -92,6 +102,7 @@ export class PlannerManageExceptionEventsComponent implements OnInit {
     this.showForm = true;
     this.isEditing = false;
     this.editingId = null;
+    this.editForm.patchValue({ status: ActionStatus.Open, referenceId: null });
     this.successMessage = '';
     this.errorMessage = '';
   }
@@ -124,47 +135,47 @@ export class PlannerManageExceptionEventsComponent implements OnInit {
       referenceId: null,
       detectedDate: new Date().toISOString().split('T')[0],
       severity: '',
-      status: ''
+      status: ActionStatus.Open
     });
   }
 
   save(): void {
     if (this.editForm.invalid) {
-      this.errorMessage = 'Please fill in all required fields.';
+      this.toastService.error('Please fill in all required fields.');
       return;
     }
 
     const dto: ExceptionEventUpsertDTO = {
       type: this.editForm.value.type,
-      referenceType: this.editForm.value.referenceType,
-      referenceId: this.editForm.value.referenceId,
+      referenceType: this.normalizeReferenceType(this.editForm.value.referenceType),
+      referenceId: this.isEditing ? (this.editForm.value.referenceId ?? 0) : 0,
       detectedDate: new Date(this.editForm.value.detectedDate),
       severity: this.editForm.value.severity,
-      status: this.editForm.value.status
+      status: this.isEditing ? this.editForm.value.status : ActionStatus.Open
     };
 
     if (this.isEditing && this.editingId) {
       this.exceptionService.updateExceptionEvent(this.editingId, dto).subscribe({
         next: () => {
-          this.successMessage = 'Exception event updated successfully.';
+          this.toastService.success('Exception event updated successfully.');
           this.loadEvents();
           this.closeForm();
         },
         error: (error) => {
           console.error('Error updating exception event:', error);
-          this.errorMessage = 'Failed to update exception event.';
+          this.toastService.error('Failed to update exception event.');
         }
       });
     } else {
       this.exceptionService.createExceptionEvent(dto).subscribe({
         next: () => {
-          this.successMessage = 'Exception event created successfully.';
+          this.toastService.success('Exception event created successfully.');
           this.loadEvents();
           this.closeForm();
         },
         error: (error) => {
           console.error('Error creating exception event:', error);
-          this.errorMessage = 'Failed to create exception event.';
+          this.toastService.error('Failed to create exception event.');
         }
       });
     }
@@ -177,12 +188,12 @@ export class PlannerManageExceptionEventsComponent implements OnInit {
 
     this.exceptionService.deleteExceptionEvent(id).subscribe({
       next: () => {
-        this.successMessage = 'Exception event deleted.';
+        this.toastService.success('Exception event deleted.');
         this.loadEvents();
       },
       error: (error) => {
         console.error('Error deleting exception event:', error);
-        this.errorMessage = 'Failed to delete exception event.';
+        this.toastService.error('Failed to delete exception event.');
       }
     });
   }
@@ -203,5 +214,19 @@ export class PlannerManageExceptionEventsComponent implements OnInit {
     }
 
     return 'bg-secondary';
+  }
+
+  private normalizeReferenceType(value: string): string {
+    const normalized = (value || '').trim().toLowerCase().replace(/\s+/g, '');
+
+    if (normalized === 'inventory' || normalized === 'inventoryposition') {
+      return 'InventoryPosition';
+    }
+
+    if (normalized === 'shipment') {
+      return 'Shipment';
+    }
+
+    return 'Order';
   }
 }

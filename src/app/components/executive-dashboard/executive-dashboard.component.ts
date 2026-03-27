@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ExecutiveDashboardService } from '../../services/executive-dashboard.service';
+import { ToastService } from '../../services/toast.service';
 import { KpiReportDto, RiskSummaryDto, KpiTrendsDto } from '../../models/kpi.model';
 import { ExecutiveKpiSummaryComponent } from './executive-kpi-summary/executive-kpi-summary.component';
 import { ExecutiveKpiTrendsComponent } from './executive-kpi-trends/executive-kpi-trends.component';
@@ -25,7 +26,8 @@ export class ExecutiveDashboardComponent implements OnInit {
 
   constructor(
     private dashboardService: ExecutiveDashboardService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastService: ToastService
   ) {}
 
   get isProfileRoute(): boolean {
@@ -72,7 +74,7 @@ export class ExecutiveDashboardComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading dashboard data:', error);
-        this.errorMessage = 'Failed to load dashboard data. Please try again.';
+        this.toastService.error('Failed to load dashboard data. Please try again.');
         this.isLoading = false;
       }
     });

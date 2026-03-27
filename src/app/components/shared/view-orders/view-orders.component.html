@@ -6,8 +6,6 @@
     </h1>
     <p class="page-subtitle">View and manage all your orders in one place</p>
   </div>
-
-  <!-- Filters -->
   <div class="filters-card">
     <div class="filters-title">
       <i class="bi bi-funnel"></i> Filters
@@ -176,8 +174,8 @@
                 <thead>
                   <tr>
                     <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Unit Price</th>
+                    <th class="text-right">Quantity</th>
+                    <th class="text-right">Unit Price</th>
                     <th class="text-right">Total</th>
                   </tr>
                 </thead>
@@ -186,8 +184,8 @@
                     <tr>
                       <td class="item-name">{{ getItemName(line.itemId || 0) }}</td>
                       <td class="quantity"><strong>{{ line.qtyOrdered }}</strong></td>
-                      <td class="price">${{ line.unitPrice | number: '1.2-2' }}</td>
-                      <td class="total text-right"><strong>${{ (line.qtyOrdered * (line.unitPrice || 0)) | number: '1.2-2' }}</strong></td>
+                      <td class="price">{{ line.unitPrice | currency:'INR':'symbol':'1.2-2':'en-IN' }}</td>
+                      <td class="total text-right"><strong>{{ (line.qtyOrdered * (line.unitPrice || 0)) | currency:'INR':'symbol':'1.2-2':'en-IN' }}</strong></td>
                     </tr>
                   }
                 </tbody>

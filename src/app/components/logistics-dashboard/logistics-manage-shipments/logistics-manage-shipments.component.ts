@@ -150,6 +150,10 @@ export class LogisticsManageShipmentsComponent implements OnInit {
     return normalized !== 'delivered' && normalized !== 'cancelled' && normalized !== 'closed';
   }
 
+  isDelivered(status: string | null | undefined): boolean {
+    return this.normalizeStatus(status) === 'delivered';
+  }
+
   markAsDelivered(shipment: ShipmentResponseDto): void {
     if (!shipment?.shipmentId || !this.canMarkDelivered(shipment.status) || this.updatingShipmentId === shipment.shipmentId) {
       return;
@@ -179,6 +183,11 @@ export class LogisticsManageShipmentsComponent implements OnInit {
   }
 
   openStatusUpdateModal(shipment: ShipmentResponseDto): void {
+    if (this.isDelivered(shipment.status)) {
+      this.toastService.info('Delivered shipments cannot be edited.');
+      return;
+    }
+
     this.shipmentForStatusUpdate = shipment;
     this.selectedStatus = shipment.status || '';
     this.updateStatusForm.patchValue({ status: shipment.status || '' });
@@ -194,6 +203,12 @@ export class LogisticsManageShipmentsComponent implements OnInit {
 
   updateShipmentStatus(): void {
     if (!this.shipmentForStatusUpdate?.shipmentId || !this.updateStatusForm.valid) {
+      return;
+    }
+
+    if (this.isDelivered(this.shipmentForStatusUpdate.status)) {
+      this.toastService.info('Delivered shipments cannot be edited.');
+      this.closeStatusUpdateModal();
       return;
     }
 

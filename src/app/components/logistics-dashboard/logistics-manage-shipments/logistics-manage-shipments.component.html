@@ -134,13 +134,16 @@
                         }
                       </button>
                     }
-                    @if (!canMarkDelivered(shipment.status)) {
+                    @if (!canMarkDelivered(shipment.status) && !isDelivered(shipment.status)) {
                       <button
                         class="btn btn-sm btn-info text-white"
                         [disabled]="updatingShipmentId === shipment.shipmentId"
                         (click)="openStatusUpdateModal(shipment)">
                         <i class="bi bi-pencil"></i> Edit Status
                       </button>
+                    }
+                    @if (isDelivered(shipment.status)) {
+                      <span class="badge bg-secondary-subtle text-secondary border">No Action (Delivered)</span>
                     }
                   </td>
                 </tr>

@@ -9,7 +9,9 @@ export class OrderContextResolver implements Resolve<void> {
   private orderContextService = inject(OrderContextService);
 
   resolve(): void {
-    // This will be overridden by specific resolvers
+    // Reset to default context: show all order types with no disabled restrictions
+    this.orderContextService.clearDisabledOrderTypes();
+    this.orderContextService.clearVisibleOrderTypes();
   }
 }
 

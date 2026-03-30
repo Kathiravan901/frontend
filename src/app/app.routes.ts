@@ -4,7 +4,7 @@ import { LoginComponent } from './components/login/login.component';
 import { RoleGuard } from './guards/role.guard';
 import { authGuard } from './guards/auth.guard';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
-import { ProcurementOrderContextResolver, WarehouseOrderContextResolver } from './guards/order-context.resolver';
+import { OrderContextResolver, ProcurementOrderContextResolver, WarehouseOrderContextResolver } from './guards/order-context.resolver';
 import { ViewProfileComponent } from './components/shared/view-profile/view-profile.component';
 import { NotFoundComponent } from './components/shared/not-found/not-found.component';
 
@@ -96,7 +96,8 @@ export const routes: Routes = [
           },
           {
             path: 'orders',
-            loadComponent: () => import('./components/shared/view-orders/view-orders.component').then(m => m.ViewOrdersComponent)
+            loadComponent: () => import('./components/shared/view-orders/view-orders.component').then(m => m.ViewOrdersComponent),
+            resolve: { orderContext: OrderContextResolver }
           },
           {
             path: 'dispatch',
@@ -176,7 +177,7 @@ export const routes: Routes = [
           {
             path: 'view-orders',
             loadComponent: () => import('./components/shared/view-orders/view-orders.component').then(m => m.ViewOrdersComponent),
-            resolve: { orderContext: WarehouseOrderContextResolver }
+            resolve: { orderContext: OrderContextResolver }
           },
           {
             path: 'place-order',

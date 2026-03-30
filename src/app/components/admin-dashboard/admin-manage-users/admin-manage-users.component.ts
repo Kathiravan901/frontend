@@ -32,7 +32,7 @@ export class AdminManageUsersComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
   searchQuery = '';
-  roleOptions: string[] = ['Admin', 'Executive', 'Logistics', 'Planner', 'Procurement', 'Warehouse'];
+  roleOptions: string[] = [];
 
   editForm: FormGroup;
 
@@ -66,6 +66,15 @@ export class AdminManageUsersComponent implements OnInit {
           roleName: user.roleName,
           status: user.status || 'Active'
         }));
+
+        this.roleOptions = Array.from(
+          new Set(
+            this.users
+              .map(user => user.roleName?.trim())
+              .filter((roleName): roleName is string => !!roleName)
+          )
+        ).sort((a, b) => a.localeCompare(b));
+
         this.filteredUsers = this.users;
         this.isLoading = false;
       },

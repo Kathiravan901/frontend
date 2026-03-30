@@ -20,16 +20,7 @@ export class AdminCreateUserComponent implements OnInit {
   isSubmitting = false;
   successMessage = '';
   errorMessage = '';
-  roleOptions: string[] = ['Admin', 'Executive', 'Logistics', 'Planner', 'Procurement', 'Warehouse'];
-
-  private readonly fallbackRoleIdMap: Record<string, number> = {
-    planner: 1,
-    logistics: 2,
-    warehouse: 3,
-    procurement: 4,
-    executive: 5,
-    admin: 6
-  };
+  roleOptions: string[] = [];
 
   private readonly roleNameToIdMap = new Map<string, number>();
 
@@ -55,20 +46,30 @@ export class AdminCreateUserComponent implements OnInit {
   }
 
   private initializeRoleMappings(): void {
-    Object.entries(this.fallbackRoleIdMap).forEach(([key, value]) => {
-      this.roleNameToIdMap.set(key, value);
-    });
+    this.roleNameToIdMap.clear();
+    const normalizedRoleNames = new Map<string, string>();
 
     this.userService.getAllUsers().subscribe({
       next: (users) => {
         users.forEach(user => {
-          if (user.roleName && user.roleId) {
-            this.roleNameToIdMap.set(user.roleName.trim().toLowerCase(), user.roleId);
+          if (user.roleName && user.roleId != null) {
+            const normalizedRoleName = user.roleName.trim().toLowerCase();
+            this.roleNameToIdMap.set(normalizedRoleName, user.roleId);
+
+            if (!normalizedRoleNames.has(normalizedRoleName)) {
+              normalizedRoleNames.set(normalizedRoleName, user.roleName.trim());
+            }
           }
         });
+
+        this.roleOptions = Array.from(normalizedRoleNames.values()).sort((a, b) => a.localeCompare(b));
+
+        if (this.roleOptions.length === 0) {
+          this.toastService.error('No roles available to assign. Please create at least one user role in the system.');
+        }
       },
       error: () => {
-        // Keep fallback mapping only if users list cannot be loaded.
+        this.toastService.error('Unable to load roles dynamically. Please refresh and try again.');
       }
     });
   }
@@ -124,9 +125,9 @@ export class AdminCreateUserComponent implements OnInit {
         this.toastService.success(message ?? 'User created successfully.');
         this.userForm.reset({ roleName: '', status: 'Active' });
         this.isSubmitting = false;
-        // Navigate back to users list after 2 seconds
+        // Navigate to dashboard after 2 seconds
         setTimeout(() => {
-          this.router.navigate(['../users'], { relativeTo: this.router.routerState.root.firstChild?.firstChild });
+          this.router.navigate(['/admin-dashboard']);
         }, 2000);
       },
       error: (error) => {

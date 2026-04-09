@@ -101,6 +101,16 @@ export class AddOrderComponent implements OnInit, OnDestroy {
       qtyOrdered: [1, [Validators.required, Validators.min(1)]],
       unitPrice: [0, [Validators.required, Validators.min(0)]]
     });
+
+    line.get('itemId')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((itemId) => {
+        const selectedItem = this.items.find(item => item.itemId === Number(itemId));
+        if (selectedItem) {
+          line.patchValue({ unitPrice: selectedItem.unitPrice }, { emitEvent: false });
+        }
+      });
+
     this.orderLines.push(line);
   }
 

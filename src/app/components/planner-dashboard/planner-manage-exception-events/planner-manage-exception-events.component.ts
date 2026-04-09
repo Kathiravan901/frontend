@@ -27,8 +27,6 @@ export class PlannerManageExceptionEventsComponent implements OnInit {
   exceptionTypes = Object.values(ExceptionType);
   exceptionSeverities = Object.values(ExceptionSeverity);
   actionStatuses = Object.values(ActionStatus);
-  createActionStatuses: ActionStatus[] = [ActionStatus.Open, ActionStatus.InProgress];
-  editActionStatuses: ActionStatus[] = [ActionStatus.Open, ActionStatus.InProgress];
   referenceTypeOptions = [
     { label: 'Order', value: 'Order' },
     { label: 'Shipment', value: 'Shipment' },

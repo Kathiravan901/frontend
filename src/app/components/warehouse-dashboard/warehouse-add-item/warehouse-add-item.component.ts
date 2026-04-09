@@ -19,13 +19,9 @@ export class WarehouseAddItemComponent implements OnInit {
   items: ItemResponseDto[] = [];
   isSubmitting = false;
   isLoading = false;
-  successMessage = '';
-  errorMessage = '';
   showAddForm = false;
   editingItemId: number | null = null;
-  selectedItem: ItemResponseDto | null = null;
   searchTerm = '';
-  isDeleting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -49,8 +45,6 @@ export class WarehouseAddItemComponent implements OnInit {
   }
 
   openAddForm() {
-    this.successMessage = '';
-    this.errorMessage = '';
     this.editingItemId = null;
     this.itemForm.reset({
       itemName: '',
@@ -108,8 +102,6 @@ export class WarehouseAddItemComponent implements OnInit {
   onSubmit() {
     if (this.itemForm.valid) {
       this.isSubmitting = true;
-      this.successMessage = '';
-      this.errorMessage = '';
 
       const dto: ItemCreateDto = this.itemForm.value;
 
@@ -147,10 +139,6 @@ export class WarehouseAddItemComponent implements OnInit {
     }
   }
 
-  viewItem(item: ItemResponseDto) {
-    this.selectedItem = item;
-  }
-
   editItem(item: ItemResponseDto) {
     this.editingItemId = item.itemId;
     this.itemForm.patchValue({
@@ -162,29 +150,6 @@ export class WarehouseAddItemComponent implements OnInit {
       category: item.category
     });
     this.showAddForm = true;
-    this.selectedItem = null;
-  }
-
-  deleteItem(itemId: number) {
-    if (!confirm('Are you sure you want to delete this item?')) {
-      return;
-    }
-    this.isDeleting = true;
-    this.itemService.deleteItem(itemId).subscribe({
-      next: () => {
-        this.toastService.success('Item deleted successfully!');
-        this.loadItems();
-        this.isDeleting = false;
-      },
-      error: () => {
-        this.toastService.error('Failed to delete item. Please try again.');
-        this.isDeleting = false;
-      }
-    });
-  }
-
-  closeViewModal() {
-    this.selectedItem = null;
   }
 
   cancelEdit() {
@@ -197,7 +162,5 @@ export class WarehouseAddItemComponent implements OnInit {
     this.editingItemId = null;
     this.itemForm.reset();
     this.showAddForm = false;
-    this.successMessage = '';
-    this.errorMessage = '';
   }
 }

@@ -23,14 +23,6 @@ export class UserService {
   }
 
   /**
-   * Login user
-   * POST /api/user/Login
-   */
-  loginUser(request: LoginRequest): Observable<string> {
-    return this.http.post<string>(`${this.apiUrl}/Login`, request);
-  }
-
-  /**
    * Create new user
    * POST /api/user/Registration
    */

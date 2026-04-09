@@ -83,11 +83,4 @@ export class ExecutiveDashboardService {
   loadReports(scope?: string): Observable<KpiReportDto[]> {
     return this.kpiService.viewReportList(scope);
   }
-
-  /**
-   * Get report by ID
-   */
-  getReportById(id: number): Observable<KpiReportDto> {
-    return this.kpiService.getReportById(id);
-  }
 }

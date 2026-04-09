@@ -150,7 +150,7 @@
                 @if (isEditing) {
                   <option value="">Select Status</option>
                 }
-                @for (status of (isEditing ? editActionStatuses : createActionStatuses); track status) {
+                @for (status of actionStatuses; track status) {
                 <option [value]="status">{{ status }}</option>
               }
             </select>

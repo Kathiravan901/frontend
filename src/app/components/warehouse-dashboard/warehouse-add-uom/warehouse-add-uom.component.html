@@ -49,13 +49,6 @@
                   title="Edit">
                   <i class="bi bi-pencil"></i> Edit
                 </button>
-                <button 
-                  class="action-btn delete-btn"
-                  (click)="deleteUom(uom.uomId)"
-                  [disabled]="isDeleting"
-                  title="Delete">
-                  <i class="bi bi-trash"></i> Delete
-                </button>
               </td>
             </tr>
           }
@@ -110,16 +103,6 @@
             </button>
           </div>
         </form>
-
-        <!-- Success Alert -->
-        @if (successMessage) {
-          <div class="success">{{ successMessage }}</div>
-        }
-
-        <!-- Error Alert -->
-        @if (errorMessage) {
-          <div class="error">{{ errorMessage }}</div>
-        }
       </div>
     </div>
   }

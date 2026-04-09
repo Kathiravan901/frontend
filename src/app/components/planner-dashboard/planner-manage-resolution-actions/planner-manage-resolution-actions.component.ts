@@ -150,11 +150,6 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
     this.updateFilteredUsers(null);
   }
 
-  /**
-   * Filter users based on exception type
-   * Delay → Logistics users
-   * Capacity, Shortage → Warehouse users
-   */
   updateFilteredUsers(exceptionId: number | null): void {
     if (!exceptionId) {
       this.filteredUsers = [...this.allUsers];
@@ -167,31 +162,15 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
       return;
     }
 
-    const exceptionType = selectedException.type?.toLowerCase() || '';
-    const hasKnownRoles = this.allUsers.some(u => {
-      const role = (u.roleName || '').toLowerCase();
-      return role === 'logistics' || role === 'warehouse';
-    });
-
-    if (!hasKnownRoles) {
+    const expectedRole = this.getExpectedRoleByExceptionType(selectedException.type);
+    if (!expectedRole) {
       this.filteredUsers = [...this.allUsers];
       return;
     }
-    
-    if (exceptionType === 'delay') {
-      // Show only Logistics users
-      this.filteredUsers = this.allUsers.filter(user => 
-        user.roleName?.toLowerCase() === 'logistics'
-      );
-    } else if (exceptionType === 'capacity' || exceptionType === 'shortage') {
-      // Show only Warehouse users
-      this.filteredUsers = this.allUsers.filter(user => 
-        user.roleName?.toLowerCase() === 'warehouse'
-      );
-    } else {
-      // For other exception types, show all users
-      this.filteredUsers = [...this.allUsers];
-    }
+
+    this.filteredUsers = this.allUsers.filter(user => 
+      user.roleName?.toLowerCase() === expectedRole
+    );
 
     if (this.filteredUsers.length === 0) {
       this.filteredUsers = [...this.allUsers];
@@ -270,6 +249,13 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
     }
   }
 
+  private getExpectedRoleByExceptionType(exceptionType: string | null | undefined): string {
+    const type = (exceptionType || '').toLowerCase();
+    if (type === 'delay') return 'logistics';
+    if (type === 'capacity' || type === 'shortage') return 'warehouse';
+    return '';
+  }
+
   /**
    * Get the expected role for a given exception type
    */
@@ -277,10 +263,9 @@ export class PlannerManageResolutionActionsComponent implements OnInit {
     if (!exceptionId) return '';
     const exception = this.exceptions.find(ex => ex.exceptionId === exceptionId);
     if (!exception) return '';
-    
-    const type = exception.type?.toLowerCase() || '';
-    if (type === 'delay') return 'Logistics';
-    if (type === 'capacity' || type === 'shortage') return 'Warehouse';
-    return 'users';
+
+    const expectedRole = this.getExpectedRoleByExceptionType(exception.type);
+    if (!expectedRole) return 'users';
+    return expectedRole === 'logistics' ? 'Logistics' : 'Warehouse';
   }
 }

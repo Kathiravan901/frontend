@@ -28,8 +28,6 @@ export class WarehouseManageInventoryComponent implements OnInit {
   isLoading = false;
   isAdjusting = false;
   isCreating = false;
-  successMessage = '';
-  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -153,8 +151,6 @@ export class WarehouseManageInventoryComponent implements OnInit {
       safetyStock: inventory.safetyStock
     });
     this.showAdjustForm = true;
-    this.successMessage = '';
-    this.errorMessage = '';
   }
 
   closeAdjustForm() {
@@ -191,8 +187,6 @@ export class WarehouseManageInventoryComponent implements OnInit {
   openCreateForm() {
     this.showCreateForm = true;
     this.createForm.reset({ initialQty: 0, safetyStock: 0 });
-    this.successMessage = '';
-    this.errorMessage = '';
   }
 
   closeCreateForm() {

@@ -52,23 +52,10 @@
               <td>{{ item.itemThreshold }}</td>
               <td class="actions-cell">
                 <button 
-                  class="action-btn view-btn"
-                  (click)="viewItem(item)"
-                  title="View Details">
-                  <i class="bi bi-eye"></i> View
-                </button>
-                <button 
                   class="action-btn edit-btn"
                   (click)="editItem(item)"
                   title="Edit">
                   <i class="bi bi-pencil"></i> Edit
-                </button>
-                <button 
-                  class="action-btn delete-btn"
-                  (click)="deleteItem(item.itemId)"
-                  [disabled]="isDeleting"
-                  title="Delete">
-                  <i class="bi bi-trash"></i> Delete
                 </button>
               </td>
             </tr>
@@ -196,64 +183,6 @@
             </button>
           </div>
         </form>
-
-        <!-- Success Alert -->
-        @if (successMessage) {
-          <div class="success">{{ successMessage }}</div>
-        }
-
-        <!-- Error Alert -->
-        @if (errorMessage) {
-          <div class="error">{{ errorMessage }}</div>
-        }
-      </div>
-    </div>
-  }
-
-  <!-- View Item Modal -->
-  @if (selectedItem) {
-    <div class="modal-overlay" (click)="closeViewModal()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <h3>Item Details</h3>
-        @if (selectedItem) {
-          <div class="item-details">
-            <div class="detail-row">
-              <span class="label">Item Name:</span>
-              <span class="value">{{ selectedItem.itemName }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Description:</span>
-              <span class="value">{{ selectedItem.itemDescription || '-' }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Unit Price:</span>
-              <span class="value">{{ selectedItem.unitPrice | currency:'INR':'symbol':'1.2-2':'en-IN' }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Unit of Measure:</span>
-              <span class="value"><span class="badge-uom">{{ getUomCode(selectedItem.uomId) }}</span></span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Threshold:</span>
-              <span class="value">{{ selectedItem.itemThreshold }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Category:</span>
-              <span class="value">{{ selectedItem.category || '-' }}</span>
-            </div>
-          </div>
-        }
-        <div class="form-actions">
-          <button 
-            type="button" 
-            (click)="closeViewModal()">Close</button>
-          <button 
-            type="button" 
-            class="edit-action"
-            (click)="editItem(selectedItem!)">
-            <i class="bi bi-pencil"></i> Edit
-          </button>
-        </div>
       </div>
     </div>
   }

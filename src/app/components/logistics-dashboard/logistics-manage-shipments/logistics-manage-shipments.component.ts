@@ -29,7 +29,6 @@ export class LogisticsManageShipmentsComponent implements OnInit {
   updatingShipmentId: number | null = null;
   showStatusUpdateModal = false;
   shipmentForStatusUpdate: ShipmentResponseDto | null = null;
-  selectedStatus = '';
   statusUpdateOptions: string[] = ['In Transit', 'Delayed', 'Delivered'];
   updateStatusForm: FormGroup;
 
@@ -60,7 +59,7 @@ export class LogisticsManageShipmentsComponent implements OnInit {
   loadShipments(): void {
     this.isLoading = true;
     this.errorMessage = '';
-    this.orderService.listShipments().subscribe({
+    this.shipmentService.listShipments().subscribe({
       next: (shipments) => {
         this.shipments = shipments;
         this.allShipments = [...shipments];
@@ -163,8 +162,8 @@ export class LogisticsManageShipmentsComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.orderService
-      .deliverShipment(shipment.shipmentId, { actualArrivalUtc: new Date() })
+    this.shipmentService
+      .deliver(shipment.shipmentId, { actualArrivalUtc: new Date() })
       .subscribe({
         next: () => {
           this.toastService.success(`Shipment #${shipment.shipmentId} marked as Delivered.`);
@@ -189,7 +188,6 @@ export class LogisticsManageShipmentsComponent implements OnInit {
     }
 
     this.shipmentForStatusUpdate = shipment;
-    this.selectedStatus = shipment.status || '';
     this.updateStatusForm.patchValue({ status: shipment.status || '' });
     this.showStatusUpdateModal = true;
   }
@@ -197,7 +195,6 @@ export class LogisticsManageShipmentsComponent implements OnInit {
   closeStatusUpdateModal(): void {
     this.showStatusUpdateModal = false;
     this.shipmentForStatusUpdate = null;
-    this.selectedStatus = '';
     this.updateStatusForm.reset();
   }
 

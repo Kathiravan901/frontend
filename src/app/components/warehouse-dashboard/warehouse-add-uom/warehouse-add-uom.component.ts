@@ -17,9 +17,6 @@ export class WarehouseAddUomComponent implements OnInit {
   uomForm: FormGroup;
   isSubmitting = false;
   isLoading = false;
-  isDeleting = false;
-  successMessage = '';
-  errorMessage = '';
   showAddForm = false;
   editingUomId: number | null = null;
   searchTerm = '';
@@ -36,8 +33,6 @@ export class WarehouseAddUomComponent implements OnInit {
   }
 
   openAddForm() {
-    this.successMessage = '';
-    this.errorMessage = '';
     this.editingUomId = null;
     this.uomForm.reset({ uomCode: '' });
     this.showAddForm = true;
@@ -47,8 +42,6 @@ export class WarehouseAddUomComponent implements OnInit {
     this.editingUomId = null;
     this.uomForm.reset();
     this.showAddForm = false;
-    this.successMessage = '';
-    this.errorMessage = '';
   }
 
   loadUoms() {
@@ -78,8 +71,6 @@ export class WarehouseAddUomComponent implements OnInit {
   onSubmit() {
     if (this.uomForm.valid) {
       this.isSubmitting = true;
-      this.successMessage = '';
-      this.errorMessage = '';
 
       const dto: UomCreateDto = this.uomForm.value;
 
@@ -125,23 +116,5 @@ export class WarehouseAddUomComponent implements OnInit {
       uomCode: uom.uomCode
     });
     this.showAddForm = true;
-  }
-
-  deleteUom(uomId: number) {
-    if (!confirm('Are you sure you want to delete this UOM?')) {
-      return;
-    }
-    this.isDeleting = true;
-    this.uomService.deleteUom(uomId).subscribe({
-      next: () => {
-        this.toastService.success('UOM deleted successfully!');
-        this.loadUoms();
-        this.isDeleting = false;
-      },
-      error: () => {
-        this.toastService.error('Failed to delete UOM. Please try again.');
-        this.isDeleting = false;
-      }
-    });
   }
 }

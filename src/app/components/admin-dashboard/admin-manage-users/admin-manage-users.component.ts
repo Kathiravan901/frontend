@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { ManageUserService } from '../../../services/manage-user.service';
-import { RouterLink, RouterOutlet } from "@angular/router";
+import { RouterLink } from '@angular/router';
 import { ToastService } from '../../../services/toast.service';
 
 interface UserData {

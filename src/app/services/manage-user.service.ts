@@ -54,12 +54,4 @@ export class ManageUserService {
   editUser(dto: AppUserDTO): Observable<string> {
     return this.http.patch<string>(`${this.manageUsersUrl}`, dto);
   }
-
-  /**
-   * Delete user
-   * DELETE /api/ManageUsers/{id}
-   */
-  deleteUser(id: number): Observable<string> {
-    return this.http.delete<string>(`${this.manageUsersUrl}/${id}`);
-  }
 }

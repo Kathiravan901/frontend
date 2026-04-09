@@ -85,22 +85,6 @@ export class ManageNetworkLocationsComponent implements OnInit {
     }
   }
 
-  onDeleteLocation(locationId: number): void {
-    this.locationService.deleteLocation(locationId).subscribe({
-      next: () => {
-        this.successMessage = 'Location deleted successfully!';
-        this.loadLocations();
-        setTimeout(() => {
-          this.successMessage = '';
-        }, 3000);
-      },
-      error: (err) => {
-        console.error('Error deleting location:', err);
-        this.errorMessage = err.error?.message || 'Failed to delete location.';
-      }
-    });
-  }
-
   closeForm(): void {
     this.isFormVisible = false;
     this.editingLocation = null;

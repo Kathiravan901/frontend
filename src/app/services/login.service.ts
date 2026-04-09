@@ -121,46 +121,4 @@ export class LoginService {
       })
     );
   }
-
-  /**
-   * Get stored auth token
-   */
-  getAuthToken(): string | null {
-    return this.authService.getAuthToken();
-  }
-
-  /**
-   * Set auth token
-   */
-  setAuthToken(token: string): void {
-    localStorage.setItem('authToken', token);
-  }
-
-  /**
-   * Logout user
-   */
-  logout(): void {
-    this.authService.logout();
-  }
-
-  /**
-   * Check if user is logged in
-   */
-  isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
-
-  /**
-   * Get current user
-   */
-  getCurrentUser() {
-    return this.authService.currentUser;
-  }
-
-  /**
-   * Get current user role
-   */
-  getCurrentUserRole() {
-    return this.authService.currentRole;
-  }
 }

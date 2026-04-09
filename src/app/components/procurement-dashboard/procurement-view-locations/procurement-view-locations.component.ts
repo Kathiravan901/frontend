@@ -65,14 +65,6 @@ export class ProcurementViewLocationsComponent implements OnInit {
     }).length;
   }
 
-  getRegionCount(): number {
-    return new Set(
-      this.locations
-        .map(l => (l.region || '').trim())
-        .filter(region => region.length > 0)
-    ).size;
-  }
-
   getLocationTypeLabel(type: string): string {
     switch ((type || '').trim().toLowerCase().replace(/\s+/g, '')) {
       case 'dc':

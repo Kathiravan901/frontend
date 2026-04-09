@@ -46,9 +46,11 @@ export class ShipmentService {
     return this.http.post<ShipmentResponseDto>(`${this.apiUrl}/${orderId}/dispatch`, dto);
   }
 
+
+
   /**
    * Deliver shipment
-   * POST /api/shipments/shipments/{shipmentId}/deliver
+   * POST /api/shipments/{shipmentId}/deliver
    */
   deliver(shipmentId: number, dto: ShipmentDeliveryDto): Observable<ShipmentResponseDto> {
     return this.http.post<ShipmentResponseDto>(`${this.apiUrl}/shipments/${shipmentId}/deliver`, dto);

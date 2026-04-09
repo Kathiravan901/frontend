@@ -51,11 +51,6 @@ export class ProcurementViewPartnersComponent implements OnInit {
     return 'secondary';
   }
 
-  getStatusCount(status: string): number {
-    const normalized = (status || '').trim().toLowerCase();
-    return this.partners.filter(p => (p.status || '').trim().toLowerCase() === normalized).length;
-  }
-
   getTypeCount(type: string): number {
     const normalized = (type || '').trim().toLowerCase();
     return this.partners.filter(p => {

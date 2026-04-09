@@ -32,7 +32,6 @@ export class AdminDashboardContentComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
-    this.loadStatistics();
   }
 
   loadUsers(): void {
@@ -47,27 +46,25 @@ export class AdminDashboardContentComponent implements OnInit {
           status: user.status || 'Active',
           createdDate: user.createdDate || new Date().toISOString().split('T')[0]
         }));
+
+        const normalizedRoleNames = new Set(
+          this.users
+            .map(user => user.roleName?.trim().toLowerCase())
+            .filter((roleName): roleName is string => !!roleName)
+        );
+
+        this.stats = {
+          totalUsers: this.users.length,
+          activeUsers: this.users.filter(u => u.status === 'Active').length,
+          inactiveUsers: this.users.filter(u => u.status === 'Inactive').length,
+          roles: normalizedRoleNames.size
+        };
+
         this.loading = false;
       },
       error: (err: any) => {
         console.error('Error loading users:', err);
         this.loading = false;
-      }
-    });
-  }
-
-  loadStatistics(): void {
-    this.manageUserService.getAllUsers().subscribe({
-      next: (data: any[]) => {
-        this.stats = {
-          totalUsers: data.length,
-          activeUsers: data.filter(u => u.status === 'Active').length,
-          inactiveUsers: data.filter(u => u.status === 'Inactive').length,
-          roles: 6
-        };
-      },
-      error: (err: any) => {
-        console.error('Error loading statistics:', err);
       }
     });
   }
